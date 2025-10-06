@@ -1,0 +1,260 @@
+-- MedRecord AI Database Schema
+-- note: Run this in Supabase SQL Editor
+
+-- Enable UUID extension
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+
+-- Users table (extends Supabase auth.users)
+CREATE TABLE IF NOT EXISTS public.profiles (
+  id UUID REFERENCES auth.users(id) PRIMARY KEY,
+  email TEXT UNIQUE NOT NULL,
+  full_name TEXT,
+  role TEXT DEFAULT 'user' CHECK (role IN ('admin', 'user', 'viewer')),
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- Patients table
+CREATE TABLE IF NOT EXISTS public.patients (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  user_id UUID REFERENCES public.profiles(id) ON DELETE CASCADE,
+  first_name TEXT NOT NULL,
+  last_name TEXT NOT NULL,
+  date_of_birth DATE,
+  phone TEXT,
+  email TEXT,
+  address TEXT,
+  city TEXT,
+  state TEXT,
+  zip TEXT,
+  notes TEXT,
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- Cases table
+CREATE TABLE IF NOT EXISTS public.cases (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  user_id UUID REFERENCES public.profiles(id) ON DELETE CASCADE,
+  patient_id UUID REFERENCES public.patients(id) ON DELETE CASCADE,
+  case_number TEXT UNIQUE,
+  case_type TEXT CHECK (case_type IN ('personal_injury', 'workers_comp', 'medical_malpractice', 'other')),
+  incident_date DATE,
+  status TEXT DEFAULT 'active' CHECK (status IN ('active', 'closed', 'archived')),
+  attorney_name TEXT,
+  insurance_company TEXT,
+  claim_number TEXT,
+  notes TEXT,
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- Documents table
+CREATE TABLE IF NOT EXISTS public.documents (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  user_id UUID REFERENCES public.profiles(id) ON DELETE CASCADE,
+  patient_id UUID REFERENCES public.patients(id) ON DELETE CASCADE,
+  case_id UUID REFERENCES public.cases(id) ON DELETE CASCADE,
+  storage_path TEXT NOT NULL,
+  file_name TEXT NOT NULL,
+  file_size BIGINT,
+  file_type TEXT,
+  document_type TEXT CHECK (document_type IN ('medical_record', 'bill', 'imaging', 'lab_report', 'deposition', 'legal', 'other')),
+  page_count INTEGER,
+  extracted_text TEXT,
+  ocr_completed BOOLEAN DEFAULT FALSE,
+  classified BOOLEAN DEFAULT FALSE,
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- Medical Events table (for chronologies)
+CREATE TABLE IF NOT EXISTS public.medical_events (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  case_id UUID REFERENCES public.cases(id) ON DELETE CASCADE,
+  document_id UUID REFERENCES public.documents(id) ON DELETE SET NULL,
+  event_date DATE NOT NULL,
+  event_time TIME,
+  provider_name TEXT,
+  facility TEXT,
+  event_type TEXT,
+  description TEXT NOT NULL,
+  significance_score INTEGER CHECK (significance_score >= 1 AND significance_score <= 5),
+  icd_codes TEXT[],
+  cpt_codes TEXT[],
+  is_duplicate BOOLEAN DEFAULT FALSE,
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- Bills table
+CREATE TABLE IF NOT EXISTS public.bills (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  case_id UUID REFERENCES public.cases(id) ON DELETE CASCADE,
+  document_id UUID REFERENCES public.documents(id) ON DELETE SET NULL,
+  provider_name TEXT,
+  bill_date DATE,
+  service_date DATE,
+  bill_amount DECIMAL(10,2),
+  paid_amount DECIMAL(10,2),
+  outstanding_amount DECIMAL(10,2),
+  cpt_code TEXT,
+  description TEXT,
+  is_duplicate BOOLEAN DEFAULT FALSE,
+  is_reasonable BOOLEAN,
+  medicare_rate DECIMAL(10,2),
+  notes TEXT,
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- AI Analysis Results table
+CREATE TABLE IF NOT EXISTS public.ai_analyses (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  case_id UUID REFERENCES public.cases(id) ON DELETE CASCADE,
+  analysis_type TEXT CHECK (analysis_type IN ('chronology', 'billing', 'demand_letter', 'narrative', 'medical_opinion', 'deposition')),
+  input_data JSONB,
+  output_data JSONB,
+  ai_model TEXT,
+  confidence_score DECIMAL(3,2),
+  reviewed BOOLEAN DEFAULT FALSE,
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- Legal Documents table
+CREATE TABLE IF NOT EXISTS public.legal_documents (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  case_id UUID REFERENCES public.cases(id) ON DELETE CASCADE,
+  document_type TEXT CHECK (document_type IN ('demand_letter', 'expert_opinion', 'narrative_summary', 'deposition_summary')),
+  content JSONB,
+  exported_path TEXT,
+  status TEXT DEFAULT 'draft' CHECK (status IN ('draft', 'review', 'final')),
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- Annotations table
+CREATE TABLE IF NOT EXISTS public.annotations (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  user_id UUID REFERENCES public.profiles(id) ON DELETE CASCADE,
+  document_id UUID REFERENCES public.documents(id) ON DELETE CASCADE,
+  page_number INTEGER,
+  x_position DECIMAL(5,2),
+  y_position DECIMAL(5,2),
+  width DECIMAL(5,2),
+  height DECIMAL(5,2),
+  annotation_type TEXT CHECK (annotation_type IN ('highlight', 'note', 'redaction')),
+  content TEXT,
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- Row Level Security (RLS) Policies
+
+ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.patients ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.cases ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.documents ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.medical_events ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.bills ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.ai_analyses ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.legal_documents ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.annotations ENABLE ROW LEVEL SECURITY;
+
+-- Profiles policies
+CREATE POLICY "Users can view own profile" ON public.profiles FOR SELECT USING (auth.uid() = id);
+CREATE POLICY "Users can update own profile" ON public.profiles FOR UPDATE USING (auth.uid() = id);
+
+-- Patients policies
+CREATE POLICY "Users can view own patients" ON public.patients FOR SELECT USING (auth.uid() = user_id);
+CREATE POLICY "Users can insert own patients" ON public.patients FOR INSERT WITH CHECK (auth.uid() = user_id);
+CREATE POLICY "Users can update own patients" ON public.patients FOR UPDATE USING (auth.uid() = user_id);
+CREATE POLICY "Users can delete own patients" ON public.patients FOR DELETE USING (auth.uid() = user_id);
+
+-- Cases policies
+CREATE POLICY "Users can view own cases" ON public.cases FOR SELECT USING (auth.uid() = user_id);
+CREATE POLICY "Users can insert own cases" ON public.cases FOR INSERT WITH CHECK (auth.uid() = user_id);
+CREATE POLICY "Users can update own cases" ON public.cases FOR UPDATE USING (auth.uid() = user_id);
+CREATE POLICY "Users can delete own cases" ON public.cases FOR DELETE USING (auth.uid() = user_id);
+
+-- Documents policies
+CREATE POLICY "Users can view own documents" ON public.documents FOR SELECT USING (auth.uid() = user_id);
+CREATE POLICY "Users can insert own documents" ON public.documents FOR INSERT WITH CHECK (auth.uid() = user_id);
+CREATE POLICY "Users can update own documents" ON public.documents FOR UPDATE USING (auth.uid() = user_id);
+CREATE POLICY "Users can delete own documents" ON public.documents FOR DELETE USING (auth.uid() = user_id);
+
+-- Medical Events policies
+CREATE POLICY "Users can view own medical events" ON public.medical_events FOR SELECT 
+  USING (EXISTS (SELECT 1 FROM public.cases WHERE cases.id = medical_events.case_id AND cases.user_id = auth.uid()));
+CREATE POLICY "Users can insert own medical events" ON public.medical_events FOR INSERT 
+  WITH CHECK (EXISTS (SELECT 1 FROM public.cases WHERE cases.id = case_id AND cases.user_id = auth.uid()));
+CREATE POLICY "Users can update own medical events" ON public.medical_events FOR UPDATE 
+  USING (EXISTS (SELECT 1 FROM public.cases WHERE cases.id = medical_events.case_id AND cases.user_id = auth.uid()));
+CREATE POLICY "Users can delete own medical events" ON public.medical_events FOR DELETE 
+  USING (EXISTS (SELECT 1 FROM public.cases WHERE cases.id = medical_events.case_id AND cases.user_id = auth.uid()));
+
+-- Bills policies
+CREATE POLICY "Users can view own bills" ON public.bills FOR SELECT 
+  USING (EXISTS (SELECT 1 FROM public.cases WHERE cases.id = bills.case_id AND cases.user_id = auth.uid()));
+CREATE POLICY "Users can insert own bills" ON public.bills FOR INSERT 
+  WITH CHECK (EXISTS (SELECT 1 FROM public.cases WHERE cases.id = case_id AND cases.user_id = auth.uid()));
+CREATE POLICY "Users can update own bills" ON public.bills FOR UPDATE 
+  USING (EXISTS (SELECT 1 FROM public.cases WHERE cases.id = bills.case_id AND cases.user_id = auth.uid()));
+CREATE POLICY "Users can delete own bills" ON public.bills FOR DELETE 
+  USING (EXISTS (SELECT 1 FROM public.cases WHERE cases.id = bills.case_id AND cases.user_id = auth.uid()));
+
+-- AI Analyses policies
+CREATE POLICY "Users can view own analyses" ON public.ai_analyses FOR SELECT 
+  USING (EXISTS (SELECT 1 FROM public.cases WHERE cases.id = ai_analyses.case_id AND cases.user_id = auth.uid()));
+CREATE POLICY "Users can insert own analyses" ON public.ai_analyses FOR INSERT 
+  WITH CHECK (EXISTS (SELECT 1 FROM public.cases WHERE cases.id = case_id AND cases.user_id = auth.uid()));
+
+-- Legal Documents policies
+CREATE POLICY "Users can view own legal docs" ON public.legal_documents FOR SELECT 
+  USING (EXISTS (SELECT 1 FROM public.cases WHERE cases.id = legal_documents.case_id AND cases.user_id = auth.uid()));
+CREATE POLICY "Users can insert own legal docs" ON public.legal_documents FOR INSERT 
+  WITH CHECK (EXISTS (SELECT 1 FROM public.cases WHERE cases.id = case_id AND cases.user_id = auth.uid()));
+CREATE POLICY "Users can update own legal docs" ON public.legal_documents FOR UPDATE 
+  USING (EXISTS (SELECT 1 FROM public.cases WHERE cases.id = legal_documents.case_id AND cases.user_id = auth.uid()));
+
+-- Annotations policies
+CREATE POLICY "Users can view own annotations" ON public.annotations FOR SELECT USING (auth.uid() = user_id);
+CREATE POLICY "Users can insert own annotations" ON public.annotations FOR INSERT WITH CHECK (auth.uid() = user_id);
+CREATE POLICY "Users can update own annotations" ON public.annotations FOR UPDATE USING (auth.uid() = user_id);
+CREATE POLICY "Users can delete own annotations" ON public.annotations FOR DELETE USING (auth.uid() = user_id);
+
+-- Functions and Triggers
+
+-- Updated_at trigger function
+CREATE OR REPLACE FUNCTION update_updated_at_column()
+RETURNS TRIGGER AS $$
+BEGIN
+  NEW.updated_at = NOW();
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Apply updated_at triggers
+CREATE TRIGGER update_profiles_updated_at BEFORE UPDATE ON public.profiles FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+CREATE TRIGGER update_patients_updated_at BEFORE UPDATE ON public.patients FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+CREATE TRIGGER update_cases_updated_at BEFORE UPDATE ON public.cases FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+CREATE TRIGGER update_documents_updated_at BEFORE UPDATE ON public.documents FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+CREATE TRIGGER update_medical_events_updated_at BEFORE UPDATE ON public.medical_events FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+CREATE TRIGGER update_bills_updated_at BEFORE UPDATE ON public.bills FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+CREATE TRIGGER update_ai_analyses_updated_at BEFORE UPDATE ON public.ai_analyses FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+CREATE TRIGGER update_legal_documents_updated_at BEFORE UPDATE ON public.legal_documents FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+CREATE TRIGGER update_annotations_updated_at BEFORE UPDATE ON public.annotations FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+
+-- Indexes for performance
+CREATE INDEX idx_patients_user_id ON public.patients(user_id);
+CREATE INDEX idx_cases_user_id ON public.cases(user_id);
+CREATE INDEX idx_cases_patient_id ON public.cases(patient_id);
+CREATE INDEX idx_documents_case_id ON public.documents(case_id);
+CREATE INDEX idx_documents_patient_id ON public.documents(patient_id);
+CREATE INDEX idx_medical_events_case_id ON public.medical_events(case_id);
+CREATE INDEX idx_medical_events_event_date ON public.medical_events(event_date);
+CREATE INDEX idx_bills_case_id ON public.bills(case_id);
+CREATE INDEX idx_ai_analyses_case_id ON public.ai_analyses(case_id);
+CREATE INDEX idx_legal_documents_case_id ON public.legal_documents(case_id);
+

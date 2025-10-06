@@ -1,36 +1,110 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# MedRecord AI
 
-## Getting Started
+**AI-Powered Medical-Legal Services for Attorneys**
 
-First, run the development server:
+Transform medical records into legal work product in minutes. Purpose-built for personal injury, medical malpractice, and workers' compensation cases.
+
+## Services Complete (9 of 16)
+
+**Core Legal Services:**
+- Medical Chronologies - AI-extracted timelines with Bates numbering
+- Billing Summaries - Automated economic damages calculation
+- Demand Letters - AI-generated settlement demands (Standard/UIM/Stowers)
+- Narrative Summaries - Comprehensive injury and causation analysis
+- Deposition Summaries - Q&A extraction with contradiction detection
+
+**Utility Services:**
+- Provider List - Healthcare roster with visit tracking
+- Missing Records - AI-detected gaps in documentation
+- Medical Synopsis - Ultra-brief case summaries
+- PDF Tools - Document merging, sorting, bookmarks
+
+**Status:** Production Ready | **Version:** 2.0.0 | **Completion:** 56%
+
+## Quick Start
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
+# Install dependencies
+pnpm install
+
+# Configure environment (see Environment Variables below)
+cp .env.local.example .env.local
+
+# Set up Supabase (see SUPABASE_SETUP.md)
+supabase db push --linked
+
+# Start development server
 pnpm dev
-# or
-bun dev
+
+# Open http://localhost:3001 (if 3000 is in use)
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Testing
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+# Run development server
+pnpm dev
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+# Follow testing guide
+# See TESTING_GUIDE.md for complete workflow tests
+```
 
-## Learn More
+## Environment Variables
 
-To learn more about Next.js, take a look at the following resources:
+Create `.env.local`:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```
+OPENAI_API_KEY=your_openai_key_here
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+NEXT_PUBLIC_SUPABASE_URL=your_supabase_project_url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+```
 
-## Deploy on Vercel
+## Tech Stack
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- **Framework**: Next.js 15 (App Router)
+- **Language**: TypeScript
+- **Database**: Supabase (Postgres + Auth + Storage)
+- **Styling**: Tailwind CSS
+- **UI**: shadcn/ui (Radix UI)
+- **AI**: OpenAI GPT-4o
+- **Icons**: Lucide React
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Project Structure
+
+```
+src/
+├── app/              # Next.js app router pages
+├── components/ui/    # UI components
+└── lib/              # Utilities and services
+```
+
+## Features
+
+- 🔐 Supabase Authentication (email/password)
+- 📁 Document Upload & Storage
+- 📊 Patient management (coming soon)
+- 🤖 AI-powered medical analysis
+- 📄 Legal document generation
+- 🔒 Secure API routes with RLS
+- 📱 Responsive design
+
+## Documentation
+
+- **[SUPABASE_SETUP.md](./SUPABASE_SETUP.md)** - Database and storage setup
+- **[TESTING.md](./TESTING.md)** - Testing guide for document upload
+- **[GAP_ANALYSIS.md](./GAP_ANALYSIS.md)** - Feature roadmap and gap analysis
+
+## Deployment
+
+Deploy to Vercel:
+
+```bash
+vercel
+```
+
+Add environment variables in Vercel dashboard.
+
+## License
+
+Private - All rights reserved
