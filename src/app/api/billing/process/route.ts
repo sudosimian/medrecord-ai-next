@@ -1,6 +1,6 @@
 import { createClient } from '@/lib/supabase-server'
 import { NextRequest, NextResponse } from 'next/server'
-import { extractPDFText } from '@/lib/pdf-processor'
+import { extractTextFromPDF } from '@/lib/pdf-processor'
 import { extractBillsFromText, detectDuplicateBills } from '@/lib/bill-extractor'
 import { categorizeServiceType } from '@/types/billing'
 
@@ -53,10 +53,10 @@ export async function POST(request: NextRequest) {
 
         // Extract text from PDF
         const buffer = Buffer.from(await fileData.arrayBuffer())
-        const { fullText } = await extractPDFText(buffer)
+        const { text } = await extractTextFromPDF(buffer)
 
         // Extract bills using GPT-4o
-        const extractedBills = await extractBillsFromText(fullText)
+        const extractedBills = await extractBillsFromText(text)
 
         // Add to collection with document reference
         for (const bill of extractedBills) {

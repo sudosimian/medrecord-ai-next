@@ -1,7 +1,7 @@
 import { createClient } from '@/lib/supabase-server'
 import { NextRequest, NextResponse } from 'next/server'
 import { generateDocumentBatesNumbers } from '@/lib/bates-numbering'
-import { extractPDFText } from '@/lib/pdf-processor'
+import { extractTextFromPDF } from '@/lib/pdf-processor'
 
 /**
  * Apply Bates numbering to documents in a case
@@ -66,12 +66,12 @@ export async function POST(request: NextRequest) {
 
         // Extract PDF to count pages
         const buffer = Buffer.from(await fileData.arrayBuffer())
-        const { pageCount } = await extractPDFText(buffer)
+        const { numPages } = await extractTextFromPDF(buffer)
 
         // Generate Bates numbers for this document
         const batesInfo = generateDocumentBatesNumbers(
           doc.id,
-          pageCount,
+          numPages,
           batesPrefix,
           currentBatesNumber
         )
@@ -84,9 +84,9 @@ export async function POST(request: NextRequest) {
               ...doc.metadata,
               bates_prefix: batesPrefix,
               bates_start: currentBatesNumber,
-              bates_end: currentBatesNumber + pageCount - 1,
+              bates_end: currentBatesNumber + numPages - 1,
               bates_range: batesInfo.range.formatted,
-              page_count: pageCount,
+              page_count: numPages,
               bates_pages: batesInfo.pages,
             },
           })
@@ -99,12 +99,12 @@ export async function POST(request: NextRequest) {
         numberedDocuments.push({
           id: doc.id,
           filename: doc.filename,
-          pageCount,
+          pageCount: numPages,
           batesRange: batesInfo.range.formatted,
         })
 
         // Increment for next document
-        currentBatesNumber += pageCount
+        currentBatesNumber += numPages
       } catch (error) {
         console.error(`Error processing document ${doc.id}:`, error)
         continue

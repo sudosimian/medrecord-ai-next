@@ -296,6 +296,19 @@ CREATE TABLE public.depositions (
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
+-- Reviews table (paralegal/attorney feedback)
+CREATE TABLE public.reviews (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  case_id UUID NOT NULL REFERENCES public.cases(id) ON DELETE CASCADE,
+  user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+  review_summary TEXT,
+  missing_documents TEXT,
+  timeline_gaps TEXT,
+  recommended_actions TEXT,
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
 -- RLS Policies for narratives
 ALTER TABLE public.narratives ENABLE ROW LEVEL SECURITY;
 
@@ -344,13 +357,40 @@ CREATE POLICY "Users can delete own depositions"
   TO authenticated
   USING (auth.uid() = user_id);
 
+-- RLS Policies for reviews
+ALTER TABLE public.reviews ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Users can view own reviews"
+  ON public.reviews FOR SELECT
+  TO authenticated
+  USING (auth.uid() = user_id);
+
+CREATE POLICY "Users can insert own reviews"
+  ON public.reviews FOR INSERT
+  TO authenticated
+  WITH CHECK (auth.uid() = user_id);
+
+CREATE POLICY "Users can update own reviews"
+  ON public.reviews FOR UPDATE
+  TO authenticated
+  USING (auth.uid() = user_id)
+  WITH CHECK (auth.uid() = user_id);
+
+CREATE POLICY "Users can delete own reviews"
+  ON public.reviews FOR DELETE
+  TO authenticated
+  USING (auth.uid() = user_id);
+
 -- Triggers for updated_at
 CREATE TRIGGER update_narratives_updated_at BEFORE UPDATE ON public.narratives FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 CREATE TRIGGER update_depositions_updated_at BEFORE UPDATE ON public.depositions FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+CREATE TRIGGER update_reviews_updated_at BEFORE UPDATE ON public.reviews FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
 -- Indexes
 CREATE INDEX idx_narratives_case_id ON public.narratives(case_id);
 CREATE INDEX idx_narratives_user_id ON public.narratives(user_id);
 CREATE INDEX idx_depositions_case_id ON public.depositions(case_id);
 CREATE INDEX idx_depositions_user_id ON public.depositions(user_id);
+CREATE INDEX idx_reviews_case_id ON public.reviews(case_id);
+CREATE INDEX idx_reviews_user_id ON public.reviews(user_id);
 

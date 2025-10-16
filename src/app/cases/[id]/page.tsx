@@ -15,10 +15,12 @@ import {
   ArrowLeft,
   Building,
   FileCheck,
-  Activity
+  Activity,
+  MessageSquare
 } from 'lucide-react'
 import Link from 'next/link'
 import { format } from 'date-fns'
+import { ParalegalReviews } from '@/components/cases/ParalegalReviews'
 
 export default function CaseDetailPage() {
   const params = useParams()
@@ -182,6 +184,10 @@ export default function CaseDetailPage() {
           <TabsTrigger value="events">
             Timeline ({events.length})
           </TabsTrigger>
+          <TabsTrigger value="reviews">
+            <MessageSquare className="mr-2 h-4 w-4" />
+            Reviews
+          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="details">
@@ -296,6 +302,10 @@ export default function CaseDetailPage() {
               </div>
             )}
           </Card>
+        </TabsContent>
+
+        <TabsContent value="reviews">
+          <ParalegalReviews caseId={caseId} />
         </TabsContent>
       </Tabs>
     </div>

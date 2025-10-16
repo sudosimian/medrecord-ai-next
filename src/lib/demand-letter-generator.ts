@@ -8,6 +8,8 @@ import {
   generateConclusion,
   generateExhibitsList
 } from './demand-letter-helpers'
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import { getStatutes, getCaseLaw } from './westlaw'
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
@@ -186,6 +188,10 @@ Keep it to 1-2 sentences. Be factual and specific.`
 }
 
 async function generateLiabilitySection(data: DemandLetterData): Promise<string> {
+  // Query Westlaw for relevant statutes before composing the liability section
+  const incidentQuery = `${data.incident_description || 'Motor vehicle accident'} ${data.case_type || 'personal injury'} negligence`
+  const statutes = await getStatutes(incidentQuery)
+  
   const prompt = `Write the LIABILITY section for a settlement demand letter.
 
 Incident details:
@@ -220,7 +226,23 @@ Use strong, confident language. This should make clear liability rests with the 
     max_tokens: 800,
   })
 
-  return response.choices[0].message.content || '[Liability section to be written]'
+  let liabilityContent = response.choices[0].message.content || '[Liability section to be written]'
+  
+  // Append relevant law citations if any were found
+  if (statutes.length > 0) {
+    liabilityContent += '\n\n## Relevant Law\n\n'
+    liabilityContent += 'The following statutes are applicable to this matter:\n\n'
+    
+    statutes.forEach((statute, index) => {
+      liabilityContent += `${index + 1}. **${statute.citation}**`
+      if (statute.description) {
+        liabilityContent += ` - ${statute.description}`
+      }
+      liabilityContent += '\n'
+    })
+  }
+  
+  return liabilityContent
 }
 
 async function generateInjuriesSummary(data: DemandLetterData): Promise<string> {
