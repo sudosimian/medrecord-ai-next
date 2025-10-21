@@ -3,10 +3,10 @@ import { createClient } from '@/lib/supabase-server'
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const supabase = createClient()
+    const supabase = await createClient()
     
     // Check auth
     const { data: { user } } = await supabase.auth.getUser()
@@ -14,11 +14,13 @@ export async function GET(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
+    const { id } = await params
+
     // Get document metadata
     const { data: document, error: docError } = await supabase
       .from('documents')
       .select('*')
-      .eq('id', params.id)
+      .eq('id', id)
       .eq('user_id', user.id)
       .single()
 

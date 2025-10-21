@@ -4,28 +4,30 @@ import { extractProviderList } from '@/lib/provider-extractor'
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { caseId: string } }
+  { params }: { params: Promise<{ caseId: string }> }
 ) {
   try {
-    const supabase = createClient()
+    const supabase = await createClient()
     
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
+    const { caseId } = await params
+
     // Get medical events
     const { data: events } = await supabase
       .from('medical_events')
       .select('*')
-      .eq('case_id', params.caseId)
+      .eq('case_id', caseId)
       .eq('user_id', user.id)
 
     // Get bills
     const { data: bills } = await supabase
       .from('bills')
       .select('*')
-      .eq('case_id', params.caseId)
+      .eq('case_id', caseId)
       .eq('user_id', user.id)
 
     const providers = await extractProviderList(events || [], bills || [])

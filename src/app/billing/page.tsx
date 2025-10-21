@@ -158,21 +158,21 @@ export default function BillingPage() {
         <div className="space-y-4">
           <div>
             <label className="text-sm font-medium mb-2 block">Select Case</label>
-            <Select value={selectedCase} onValueChange={(value) => {
+            <Select value={selectedCase} onValueChange={(value: string) => {
               setSelectedCase(value)
               fetchSummary(value)
             }}>
-              <SelectTrigger>
+              <SelectTrigger className="">
                 <SelectValue placeholder="Choose a case to analyze" />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className="">
                 {cases.length === 0 ? (
-                  <SelectItem value="none" disabled>
+                  <SelectItem value="none" disabled className="">
                     No cases available
                   </SelectItem>
                 ) : (
                   cases.map(c => (
-                    <SelectItem key={c.id} value={c.id}>
+                    <SelectItem key={c.id} value={c.id} className="">
                       {c.case_number} - {c.patients?.last_name}, {c.patients?.first_name}
                     </SelectItem>
                   ))

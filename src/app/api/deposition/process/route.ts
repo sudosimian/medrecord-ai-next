@@ -5,7 +5,7 @@ import { extractTextFromPDF } from '@/lib/pdf-processor'
 
 export async function POST(request: NextRequest) {
   try {
-    const supabase = createClient()
+    const supabase = await createClient()
     
     // Check auth
     const { data: { user } } = await supabase.auth.getUser()
@@ -64,7 +64,7 @@ export async function POST(request: NextRequest) {
     }
 
     const depositionData = await processDepositionTranscript(
-      extractedText,
+      extractedText.text,
       witnessData,
       caseData
     )

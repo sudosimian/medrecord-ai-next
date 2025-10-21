@@ -20,7 +20,9 @@ import {
 } from 'lucide-react'
 import Link from 'next/link'
 import { format } from 'date-fns'
-import { ParalegalReviews } from '@/components/cases/ParalegalReviews'
+import { ReviewForm } from '@/components/reviews/review-form'
+import { ReviewList } from '@/components/reviews/review-list'
+import { JobProgress } from '@/components/jobs/job-progress'
 
 export default function CaseDetailPage() {
   const params = useParams()
@@ -31,12 +33,29 @@ export default function CaseDetailPage() {
   const [documents, setDocuments] = useState<any[]>([])
   const [events, setEvents] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
+  const [reviewRefreshTrigger, setReviewRefreshTrigger] = useState(0)
 
   useEffect(() => {
     fetchCaseData()
     fetchDocuments()
     fetchEvents()
   }, [caseId])
+
+  // Test function to manually enqueue a job
+  const handleEnqueueTestJob = async () => {
+    try {
+      const response = await fetch(`/api/jobs/${caseId}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ type: 'ingest', payload: { test: true } }),
+      })
+      if (response.ok) {
+        console.log('Test job enqueued successfully')
+      }
+    } catch (error) {
+      console.error('Failed to enqueue test job:', error)
+    }
+  }
 
   const fetchCaseData = async () => {
     try {
@@ -116,15 +135,23 @@ export default function CaseDetailPage() {
           </div>
           <p className="text-gray-600 mt-1">{getCaseTypeLabel(caseData.case_type)}</p>
         </div>
-        <Link href={`/chronology?caseId=${caseId}`}>
-          <Button>
-            <Activity className="mr-2 h-4 w-4" />
-            View Chronology
+        <div className="flex gap-2">
+          <Link href={`/chronology?caseId=${caseId}`}>
+            <Button>
+              <Activity className="mr-2 h-4 w-4" />
+              View Chronology
+            </Button>
+          </Link>
+          {/* Test button for manually enqueueing jobs */}
+          <Button variant="outline" size="sm" onClick={handleEnqueueTestJob}>
+            Test Job
           </Button>
-        </Link>
+        </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      {/* Case info cards and background job status */}
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
+        {/* Patient Info */}
         <Card className="p-6">
           <div className="flex items-center gap-3 mb-3">
             <User className="h-5 w-5 text-gray-400" />
@@ -150,6 +177,7 @@ export default function CaseDetailPage() {
           )}
         </Card>
 
+        {/* Incident Date */}
         <Card className="p-6">
           <div className="flex items-center gap-3 mb-3">
             <Calendar className="h-5 w-5 text-gray-400" />
@@ -164,6 +192,7 @@ export default function CaseDetailPage() {
           )}
         </Card>
 
+        {/* Created Date */}
         <Card className="p-6">
           <div className="flex items-center gap-3 mb-3">
             <Clock className="h-5 w-5 text-gray-400" />
@@ -173,6 +202,11 @@ export default function CaseDetailPage() {
             {format(new Date(caseData.created_at), 'MMM dd, yyyy')}
           </p>
         </Card>
+
+        {/* Background Processing Status */}
+        <div className="lg:row-span-1">
+          <JobProgress caseId={caseId} />
+        </div>
       </div>
 
       <Tabs defaultValue="details" className="space-y-4">
@@ -305,7 +339,16 @@ export default function CaseDetailPage() {
         </TabsContent>
 
         <TabsContent value="reviews">
-          <ParalegalReviews caseId={caseId} />
+          <div className="space-y-6">
+            <ReviewForm
+              caseId={caseId}
+              onCreated={() => setReviewRefreshTrigger(prev => prev + 1)}
+            />
+            <ReviewList
+              caseId={caseId}
+              refreshTrigger={reviewRefreshTrigger}
+            />
+          </div>
         </TabsContent>
       </Tabs>
     </div>

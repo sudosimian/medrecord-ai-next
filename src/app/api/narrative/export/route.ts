@@ -4,7 +4,7 @@ import { exportNarrativeToWord } from '@/lib/export-utils'
 
 export async function POST(request: NextRequest) {
   try {
-    const supabase = createClient()
+    const supabase = await createClient()
     
     // Check auth
     const { data: { user } } = await supabase.auth.getUser()
@@ -52,7 +52,7 @@ export async function POST(request: NextRequest) {
     const fileBuffer = await exportNarrativeToWord(narrative, caseInfo)
     const filename = `narrative_${caseData.case_number}_${new Date().toISOString().split('T')[0]}.docx`
 
-    return new NextResponse(fileBuffer, {
+    return new NextResponse(new Uint8Array(fileBuffer), {
       headers: {
         'Content-Type': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
         'Content-Disposition': `attachment; filename="${filename}"`,

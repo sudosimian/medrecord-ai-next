@@ -3,10 +3,10 @@ import { createClient } from '@/lib/supabase-server'
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { caseId: string } }
+  { params }: { params: Promise<{ caseId: string }> }
 ) {
   try {
-    const supabase = createClient()
+    const supabase = await createClient()
     
     // Check auth
     const { data: { user } } = await supabase.auth.getUser()
@@ -14,10 +14,12 @@ export async function GET(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
+    const { caseId } = await params
+
     const { data, error } = await supabase
       .from('depositions')
       .select('*')
-      .eq('case_id', params.caseId)
+      .eq('case_id', caseId)
       .eq('user_id', user.id)
       .order('created_at', { ascending: false })
 

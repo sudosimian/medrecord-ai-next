@@ -4,21 +4,23 @@ import { generateMedicalSynopsis } from '@/lib/medical-synopsis-generator'
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { caseId: string } }
+  { params }: { params: Promise<{ caseId: string }> }
 ) {
   try {
-    const supabase = createClient()
+    const supabase = await createClient()
     
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
+    const { caseId } = await params
+
     // Get case data
     const { data: caseData } = await supabase
       .from('cases')
       .select('*, patients(*)')
-      .eq('id', params.caseId)
+      .eq('id', caseId)
       .single()
 
     if (!caseData) {
@@ -29,14 +31,14 @@ export async function GET(
     const { data: events } = await supabase
       .from('medical_events')
       .select('*')
-      .eq('case_id', params.caseId)
+      .eq('case_id', caseId)
       .order('event_date', { ascending: true })
 
     // Get billing summary
     const { data: bills } = await supabase
       .from('bills')
       .select('*')
-      .eq('case_id', params.caseId)
+      .eq('case_id', caseId)
 
     const billingData = {
       total_billed: bills?.reduce((sum, b) => sum + (b.amount || 0), 0) || 0,

@@ -4,7 +4,7 @@ import { exportBillingToExcel } from '@/lib/export-utils'
 
 export async function POST(request: NextRequest) {
   try {
-    const supabase = createClient()
+    const supabase = await createClient()
     
     // Check auth
     const { data: { user } } = await supabase.auth.getUser()
@@ -53,7 +53,7 @@ export async function POST(request: NextRequest) {
     const fileBuffer = exportBillingToExcel(bills, summary)
     const filename = `billing_${caseData.case_number}_${new Date().toISOString().split('T')[0]}.xlsx`
 
-    return new NextResponse(fileBuffer, {
+    return new NextResponse(new Uint8Array(fileBuffer), {
       headers: {
         'Content-Type': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
         'Content-Disposition': `attachment; filename="${filename}"`,
