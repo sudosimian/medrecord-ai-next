@@ -23,15 +23,15 @@ export default function RecordsPage() {
 
       <Tabs defaultValue="all" className="space-y-4">
         <TabsList>
-          <TabsTrigger value="all">All Documents</TabsTrigger>
-          <TabsTrigger value="upload">Upload</TabsTrigger>
+          <TabsTrigger className="" value="all">All Documents</TabsTrigger>
+          <TabsTrigger className="" value="upload">Upload</TabsTrigger>
         </TabsList>
 
-        <TabsContent value="all" className="space-y-4">
+        <TabsContent className="space-y-4" value="all">
           <DocumentList refreshTrigger={refreshTrigger} />
         </TabsContent>
 
-        <TabsContent value="upload" className="space-y-4">
+        <TabsContent className="space-y-4" value="upload">
           <div className="bg-white p-6 rounded-lg border">
             <h2 className="text-lg font-semibold mb-4">Upload Documents</h2>
             <DocumentUpload onUploadComplete={handleUploadComplete} />

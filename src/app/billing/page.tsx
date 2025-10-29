@@ -167,12 +167,12 @@ export default function BillingPage() {
               </SelectTrigger>
               <SelectContent className="">
                 {cases.length === 0 ? (
-                  <SelectItem value="none" disabled className="">
+                  <SelectItem className="" value="none" disabled>
                     No cases available
                   </SelectItem>
                 ) : (
                   cases.map(c => (
-                    <SelectItem key={c.id} value={c.id} className="">
+                    <SelectItem className="" key={c.id} value={c.id}>
                       {c.case_number} - {c.patients?.last_name}, {c.patients?.first_name}
                     </SelectItem>
                   ))
@@ -182,7 +182,7 @@ export default function BillingPage() {
           </div>
 
           <div className="flex gap-3">
-            <Button
+            <Button className="" variant="default" size="default" 
               onClick={processDocuments}
               disabled={!selectedCase || processing}
             >
@@ -199,15 +199,13 @@ export default function BillingPage() {
               )}
             </Button>
 
-            <Button variant="outline" disabled={!selectedCase || loading} onClick={() => fetchSummary(selectedCase)}>
+            <Button className="" variant="outline" size="default" disabled={!selectedCase || loading} onClick={() => fetchSummary(selectedCase)}>
               Refresh
             </Button>
 
             {summary && summary.num_bills > 0 && (
-              <Button
-                onClick={exportBilling}
+              <Button className="" variant="outline" size="default" onClick={exportBilling}
                 disabled={!selectedCase}
-                variant="outline"
               >
                 <Download className="mr-2 h-4 w-4" />
                 Export Excel
@@ -216,9 +214,9 @@ export default function BillingPage() {
           </div>
 
           {stats && (
-            <Alert>
+            <Alert className="" variant="default">
               <CheckCircle className="h-4 w-4" />
-              <AlertDescription>
+              <AlertDescription className="">
                 Extracted {stats.bills_extracted} bills from {stats.total_documents} documents
                 {stats.duplicates_found > 0 && ` (${stats.duplicates_found} duplicates found)`}.
                 Processing time: {(stats.processing_time / 1000).toFixed(1)}s
@@ -359,9 +357,9 @@ export default function BillingPage() {
               </h3>
               
               {summary.duplicates.length > 0 && (
-                <Alert className="mb-4">
+                <Alert className="mb-4" variant="default">
                   <AlertTriangle className="h-4 w-4" />
-                  <AlertDescription>
+                  <AlertDescription className="">
                     <strong>{summary.duplicates.length} duplicate charges</strong> found.
                     Potential savings: {formatCurrency(summary.duplicates.reduce((sum, d) => sum + d.potential_overcharge, 0))}
                   </AlertDescription>
@@ -369,9 +367,9 @@ export default function BillingPage() {
               )}
 
               {summary.overcharges.length > 0 && (
-                <Alert>
+                <Alert className="" variant="default">
                   <AlertTriangle className="h-4 w-4" />
-                  <AlertDescription>
+                  <AlertDescription className="">
                     <strong>{summary.overcharges.length} potential overcharges</strong> detected.
                     Total overcharge amount: {formatCurrency(summary.overcharges.reduce((sum, o) => sum + o.overcharge_amount, 0))}
                   </AlertDescription>
@@ -393,7 +391,7 @@ export default function BillingPage() {
                           Reasonable: {formatCurrency(overcharge.reasonable_rate)}
                         </p>
                       </div>
-                      <Badge className="bg-red-100 text-red-800">
+                      <Badge className="bg-red-100 text-red-800" variant="default">
                         +{overcharge.overcharge_percentage}%
                       </Badge>
                     </div>

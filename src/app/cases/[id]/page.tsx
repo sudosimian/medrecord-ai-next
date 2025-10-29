@@ -123,13 +123,13 @@ export default function CaseDetailPage() {
   return (
     <div className="p-6 space-y-6">
       <div className="flex items-center gap-4">
-        <Button variant="ghost" onClick={() => router.push('/cases')}>
+        <Button className="" variant="ghost" size="default" onClick={() => router.push('/cases')}>
           <ArrowLeft className="h-4 w-4" />
         </Button>
         <div className="flex-1">
           <div className="flex items-center gap-3">
             <h1 className="text-3xl font-bold">{caseData.case_number}</h1>
-            <Badge className={getStatusColor(caseData.status)}>
+            <Badge className={getStatusColor(caseData.status)} variant="default">
               {caseData.status}
             </Badge>
           </div>
@@ -137,13 +137,13 @@ export default function CaseDetailPage() {
         </div>
         <div className="flex gap-2">
           <Link href={`/chronology?caseId=${caseId}`}>
-            <Button>
+            <Button className="" variant="default" size="default">
               <Activity className="mr-2 h-4 w-4" />
               View Chronology
             </Button>
           </Link>
           {/* Test button for manually enqueueing jobs */}
-          <Button variant="outline" size="sm" onClick={handleEnqueueTestJob}>
+          <Button className="" variant="outline" size="sm" onClick={handleEnqueueTestJob}>
             Test Job
           </Button>
         </div>
@@ -210,21 +210,21 @@ export default function CaseDetailPage() {
       </div>
 
       <Tabs defaultValue="details" className="space-y-4">
-        <TabsList>
-          <TabsTrigger value="details">Details</TabsTrigger>
-          <TabsTrigger value="documents">
+        <TabsList className="">
+          <TabsTrigger className="" value="details">Details</TabsTrigger>
+          <TabsTrigger className="" value="documents">
             Documents ({documents.length})
           </TabsTrigger>
-          <TabsTrigger value="events">
+          <TabsTrigger className="" value="events">
             Timeline ({events.length})
           </TabsTrigger>
-          <TabsTrigger value="reviews">
+          <TabsTrigger className="" value="reviews">
             <MessageSquare className="mr-2 h-4 w-4" />
             Reviews
           </TabsTrigger>
         </TabsList>
 
-        <TabsContent value="details">
+        <TabsContent className="" value="details">
           <Card className="p-6">
             <div className="grid grid-cols-2 gap-6">
               {caseData.attorney_name && (
@@ -261,7 +261,7 @@ export default function CaseDetailPage() {
           </Card>
         </TabsContent>
 
-        <TabsContent value="documents">
+        <TabsContent className="" value="documents">
           <Card className="p-6">
             {documents.length === 0 ? (
               <div className="text-center py-8 text-gray-500">
@@ -283,7 +283,7 @@ export default function CaseDetailPage() {
                         </p>
                       </div>
                     </div>
-                    <Badge variant="outline">{doc.document_type}</Badge>
+                    <Badge className="" variant="outline">{doc.document_type}</Badge>
                   </div>
                 ))}
               </div>
@@ -291,7 +291,7 @@ export default function CaseDetailPage() {
           </Card>
         </TabsContent>
 
-        <TabsContent value="events">
+        <TabsContent className="" value="events">
           <Card className="p-6">
             {loading ? (
               <div className="text-center py-8 text-gray-500">
@@ -302,7 +302,7 @@ export default function CaseDetailPage() {
                 <FileCheck className="mx-auto h-12 w-12 text-gray-400 mb-3" />
                 <p className="text-gray-500">No medical events extracted yet</p>
                 <Link href={`/chronology?caseId=${caseId}`}>
-                  <Button className="mt-4">
+                  <Button className="mt-4" variant="default" size="default">
                     <Activity className="mr-2 h-4 w-4" />
                     Process Documents
                   </Button>
@@ -328,7 +328,7 @@ export default function CaseDetailPage() {
                 ))}
                 {events.length > 5 && (
                   <Link href={`/chronology?caseId=${caseId}`}>
-                    <Button variant="outline" className="w-full">
+                    <Button variant="outline" className="w-full" size="default">
                       View All {events.length} Events
                     </Button>
                   </Link>
@@ -338,7 +338,7 @@ export default function CaseDetailPage() {
           </Card>
         </TabsContent>
 
-        <TabsContent value="reviews">
+        <TabsContent className="" value="reviews">
           <div className="space-y-6">
             <ReviewForm
               caseId={caseId}

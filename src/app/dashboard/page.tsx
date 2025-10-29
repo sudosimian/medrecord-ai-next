@@ -179,13 +179,13 @@ export default function DashboardPage() {
             </div>
             <div className="mt-6 flex gap-3">
               <Link href="/cases">
-                <Button size="lg">
+                <Button className="" size="lg" variant="default">
                   <Plus className="mr-2 h-5 w-5" />
                   Create Your First Case
                 </Button>
               </Link>
               <Link href="/workflow-guide">
-                <Button variant="outline" size="lg">
+                <Button className="" variant="outline" size="lg">
                   View Workflow Guide
                 </Button>
               </Link>
@@ -240,7 +240,7 @@ export default function DashboardPage() {
           </p>
         </div>
         <Link href="/cases">
-          <Button>
+          <Button className="" variant="default" size="default">
             <Plus className="mr-2 h-4 w-4" />
             New Case
         </Button>
@@ -317,7 +317,7 @@ export default function DashboardPage() {
                           </Button>
                         )}
                         {step.status === 'complete' && (
-                          <Badge className="mt-2 bg-green-100 text-green-800 text-xs">
+                          <Badge className="mt-2 bg-green-100 text-green-800 text-xs" variant="default">
                             Complete
                           </Badge>
                         )}
@@ -342,7 +342,7 @@ export default function DashboardPage() {
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-lg font-semibold">Recent Cases</h2>
           <Link href="/cases">
-            <Button variant="ghost" size="sm">
+            <Button className="" variant="ghost" size="sm">
               View All <ArrowRight className="ml-2 h-4 w-4" />
             </Button>
           </Link>
@@ -356,7 +356,7 @@ export default function DashboardPage() {
               Create your first case to get started
             </p>
             <Link href="/cases">
-              <Button>
+              <Button className="" variant="default" size="default">
                 <Plus className="mr-2 h-4 w-4" />
                 Create Case
               </Button>
@@ -374,7 +374,7 @@ export default function DashboardPage() {
                         {caseItem.patients?.last_name}, {caseItem.patients?.first_name}
                       </p>
                     </div>
-                    <Badge className="bg-green-100 text-green-800">
+                    <Badge className="bg-green-100 text-green-800" variant="default">
                       {caseItem.status}
                     </Badge>
               </div>
@@ -400,7 +400,7 @@ export default function DashboardPage() {
         </p>
         <div className="flex gap-3">
           <Link href="/workflow-guide">
-            <Button variant="outline" size="sm">
+            <Button className="" variant="outline" size="sm">
               View Full Guide
             </Button>
           </Link>

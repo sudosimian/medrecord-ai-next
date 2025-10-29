@@ -94,7 +94,7 @@ export function CreateCaseDialog({ onCaseCreated }: CreateCaseDialogProps) {
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <Label htmlFor="patient_id">Patient *</Label>
+            <Label htmlFor="patient_id" className="">Patient *</Label>
             <Select
               value={formData.patient_id}
               onValueChange={(value) => setFormData({ ...formData, patient_id: value })}
@@ -105,7 +105,7 @@ export function CreateCaseDialog({ onCaseCreated }: CreateCaseDialogProps) {
               </SelectTrigger>
               <SelectContent>
                 {patients.map((patient) => (
-                  <SelectItem key={patient.id} value={patient.id}>
+                  <SelectItem className="" key={patient.id} value={patient.id}>
                     {patient.last_name}, {patient.first_name}
                   </SelectItem>
                 ))}
@@ -115,17 +115,16 @@ export function CreateCaseDialog({ onCaseCreated }: CreateCaseDialogProps) {
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <Label htmlFor="case_number">Case Number</Label>
-              <Input
-                id="case_number"
+              <Label htmlFor="case_number" className="">Case Number</Label>
+              <Input className="" id="case_number"
                 value={formData.case_number}
-                onChange={(e) => setFormData({ ...formData, case_number: e.target.value })}
+                onChange={(e) = type="text"> setFormData({ ...formData, case_number: e.target.value })}
                 placeholder="Auto-generated if empty"
               />
             </div>
 
             <div>
-              <Label htmlFor="case_type">Case Type *</Label>
+              <Label htmlFor="case_type" className="">Case Type *</Label>
               <Select
                 value={formData.case_type}
                 onValueChange={(value) => setFormData({ ...formData, case_type: value })}
@@ -135,19 +134,18 @@ export function CreateCaseDialog({ onCaseCreated }: CreateCaseDialogProps) {
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="personal_injury">Personal Injury</SelectItem>
-                  <SelectItem value="workers_comp">Workers Compensation</SelectItem>
-                  <SelectItem value="medical_malpractice">Medical Malpractice</SelectItem>
-                  <SelectItem value="other">Other</SelectItem>
+                  <SelectItem className="" value="personal_injury">Personal Injury</SelectItem>
+                  <SelectItem className="" value="workers_comp">Workers Compensation</SelectItem>
+                  <SelectItem className="" value="medical_malpractice">Medical Malpractice</SelectItem>
+                  <SelectItem className="" value="other">Other</SelectItem>
                 </SelectContent>
               </Select>
             </div>
           </div>
 
           <div>
-            <Label htmlFor="incident_date">Incident Date</Label>
-            <Input
-              id="incident_date"
+            <Label htmlFor="incident_date" className="">Incident Date</Label>
+            <Input className="" id="incident_date"
               type="date"
               value={formData.incident_date}
               onChange={(e) => setFormData({ ...formData, incident_date: e.target.value })}
@@ -156,36 +154,33 @@ export function CreateCaseDialog({ onCaseCreated }: CreateCaseDialogProps) {
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <Label htmlFor="attorney_name">Attorney Name</Label>
-              <Input
-                id="attorney_name"
+              <Label htmlFor="attorney_name" className="">Attorney Name</Label>
+              <Input className="" id="attorney_name"
                 value={formData.attorney_name}
-                onChange={(e) => setFormData({ ...formData, attorney_name: e.target.value })}
+                onChange={(e) = type="text"> setFormData({ ...formData, attorney_name: e.target.value })}
               />
             </div>
 
             <div>
-              <Label htmlFor="insurance_company">Insurance Company</Label>
-              <Input
-                id="insurance_company"
+              <Label htmlFor="insurance_company" className="">Insurance Company</Label>
+              <Input className="" id="insurance_company"
                 value={formData.insurance_company}
-                onChange={(e) => setFormData({ ...formData, insurance_company: e.target.value })}
+                onChange={(e) = type="text"> setFormData({ ...formData, insurance_company: e.target.value })}
               />
             </div>
           </div>
 
           <div>
-            <Label htmlFor="claim_number">Claim Number</Label>
-            <Input
-              id="claim_number"
+            <Label htmlFor="claim_number" className="">Claim Number</Label>
+            <Input className="" id="claim_number"
               value={formData.claim_number}
-              onChange={(e) => setFormData({ ...formData, claim_number: e.target.value })}
+              onChange={(e) = type="text"> setFormData({ ...formData, claim_number: e.target.value })}
             />
           </div>
 
           <div>
-            <Label htmlFor="notes">Notes</Label>
-            <Textarea
+            <Label htmlFor="notes" className="">Notes</Label>
+            <Textarea className=""
               id="notes"
               value={formData.notes}
               onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
@@ -194,10 +189,10 @@ export function CreateCaseDialog({ onCaseCreated }: CreateCaseDialogProps) {
           </div>
 
           <div className="flex justify-end gap-2">
-            <Button type="button" variant="outline" onClick={() => setOpen(false)}>
+            <Button className="" type="button" variant="outline" size="default" onClick={() => setOpen(false)}>
               Cancel
             </Button>
-            <Button type="submit" disabled={loading}>
+            <Button className="" type="submit" disabled={loading} variant="default" size="default">
               {loading ? 'Creating...' : 'Create Case'}
             </Button>
           </div>

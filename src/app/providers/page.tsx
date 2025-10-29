@@ -77,12 +77,12 @@ export default function ProvidersPage() {
           <div>
             <label className="text-sm font-medium">Select Case</label>
             <Select value={selectedCase} onValueChange={handleCaseChange}>
-              <SelectTrigger>
+              <SelectTrigger className="">
                 <SelectValue placeholder="Choose a case..." />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className="">
                 {cases.map((c) => (
-                  <SelectItem key={c.id} value={c.id}>
+                  <SelectItem className="" key={c.id} value={c.id}>
                     {c.case_number} - {c.patients?.last_name}, {c.patients?.first_name}
                   </SelectItem>
                 ))}
@@ -91,7 +91,7 @@ export default function ProvidersPage() {
           </div>
 
           {providers.length > 0 && (
-            <Button onClick={exportToExcel} variant="outline">
+            <Button className="" onClick={exportToExcel} variant="outline" size="default">
               <Download className="mr-2 h-4 w-4" />
               Export Excel
             </Button>
@@ -107,7 +107,7 @@ export default function ProvidersPage() {
                 <div className="flex items-start justify-between">
                   <div>
                     <h3 className="font-semibold text-lg">{provider.name}</h3>
-                    <Badge variant="outline">{provider.specialty}</Badge>
+                    <Badge className="" variant="outline">{provider.specialty}</Badge>
                   </div>
                   <User className="h-5 w-5 text-gray-400" />
                 </div>

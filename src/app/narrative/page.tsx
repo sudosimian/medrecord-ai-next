@@ -100,12 +100,12 @@ export default function NarrativePage() {
           <div>
             <label className="text-sm font-medium">Select Case</label>
             <Select value={selectedCase} onValueChange={handleCaseChange}>
-              <SelectTrigger>
+              <SelectTrigger className="">
                 <SelectValue placeholder="Choose a case..." />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className="">
                 {cases.map((c) => (
-                  <SelectItem key={c.id} value={c.id}>
+                  <SelectItem className="" key={c.id} value={c.id}>
                     {c.case_number} - {c.patients?.last_name}, {c.patients?.first_name}
                   </SelectItem>
                 ))}
@@ -114,7 +114,7 @@ export default function NarrativePage() {
           </div>
 
           <div className="flex gap-3">
-            <Button
+            <Button className="" variant="default" size="default"
               onClick={generateNarrative}
               disabled={!selectedCase || generating}
             >
@@ -131,12 +131,12 @@ export default function NarrativePage() {
               )}
             </Button>
 
-            <Button variant="outline" disabled={!selectedCase || loading} onClick={() => fetchNarrative(selectedCase)}>
+            <Button className="" variant="outline" disabled={!selectedCase || loading} size="default" onClick={() => fetchNarrative(selectedCase)}>
               Refresh
             </Button>
 
             {narrative && (
-              <Button
+              <Button className="" variant="default" size="default"
                 onClick={async () => {
                   try {
                     const response = await fetch('/api/narrative/export', {
@@ -190,7 +190,7 @@ export default function NarrativePage() {
                   <div key={idx} className="border-l-4 border-blue-500 pl-4">
                     <div className="flex items-center gap-2 mb-2">
                       <h3 className="font-semibold">{category.category}</h3>
-                      <Badge className={getSeverityColor(category.severity)}>
+                      <Badge className={getSeverityColor(category.severity)} variant="default">
                         {category.severity}
                       </Badge>
                     </div>

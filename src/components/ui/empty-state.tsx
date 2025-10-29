@@ -34,7 +34,7 @@ export function EmptyState({
         <p className="mt-2 text-sm text-muted-foreground max-w-sm">{description}</p>
       )}
       {action && (
-        <Button onClick={action.onClick} className="mt-6">
+        <Button onClick={action.onClick} className="mt-6" variant="default" size="default">
           {action.label}
         </Button>
       )}

@@ -118,13 +118,13 @@ export function DocumentUpload({ patientId, caseId, onUploadComplete }: Document
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="medical_record">Medical Record</SelectItem>
-              <SelectItem value="bill">Bill</SelectItem>
-              <SelectItem value="imaging">Imaging</SelectItem>
-              <SelectItem value="lab_report">Lab Report</SelectItem>
-              <SelectItem value="deposition">Deposition</SelectItem>
-              <SelectItem value="legal">Legal Document</SelectItem>
-              <SelectItem value="other">Other</SelectItem>
+              <SelectItem className="" value="medical_record">Medical Record</SelectItem>
+              <SelectItem className="" value="bill">Bill</SelectItem>
+              <SelectItem className="" value="imaging">Imaging</SelectItem>
+              <SelectItem className="" value="lab_report">Lab Report</SelectItem>
+              <SelectItem className="" value="deposition">Deposition</SelectItem>
+              <SelectItem className="" value="legal">Legal Document</SelectItem>
+              <SelectItem className="" value="other">Other</SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -154,12 +154,12 @@ export function DocumentUpload({ patientId, caseId, onUploadComplete }: Document
             <h3 className="text-sm font-medium">Files ({files.length})</h3>
             <div className="flex gap-2">
               {files.some(f => f.status === 'success') && (
-                <Button variant="outline" size="sm" onClick={clearCompleted}>
+                <Button className="" variant="outline" size="sm" onClick={clearCompleted}>
                   Clear Completed
                 </Button>
               )}
               {files.some(f => f.status === 'pending') && (
-                <Button size="sm" onClick={uploadAll}>
+                <Button className="" size="sm" onClick={uploadAll} variant="default">
                   Upload All
                 </Button>
               )}
@@ -195,8 +195,7 @@ export function DocumentUpload({ patientId, caseId, onUploadComplete }: Document
 
                 <div className="flex items-center gap-2 flex-shrink-0">
                   {uploadFile.status === 'pending' && (
-                    <Button
-                      size="sm"
+                    <Button className="" size="sm"
                       variant="outline"
                       onClick={() => uploadFile(index)}
                     >
@@ -216,8 +215,7 @@ export function DocumentUpload({ patientId, caseId, onUploadComplete }: Document
                     <AlertCircle className="h-5 w-5 text-red-600" />
                   )}
                   
-                  <Button
-                    size="sm"
+                  <Button className="" size="sm"
                     variant="ghost"
                     onClick={() => removeFile(index)}
                   >

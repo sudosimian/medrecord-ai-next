@@ -91,7 +91,7 @@ export default function CasesPage() {
                     <Briefcase className="h-5 w-5 text-gray-400" />
                     <span className="font-semibold">{caseItem.case_number}</span>
                   </div>
-                  <Badge className={getStatusColor(caseItem.status)}>
+                  <Badge className={getStatusColor(caseItem.status)} variant="default">
                     {caseItem.status}
                   </Badge>
                 </div>
@@ -106,7 +106,7 @@ export default function CasesPage() {
                     </div>
                   )}
 
-                  <Badge variant="outline">
+                  <Badge className="" variant="outline">
                     {getCaseTypeLabel(caseItem.case_type)}
                   </Badge>
 

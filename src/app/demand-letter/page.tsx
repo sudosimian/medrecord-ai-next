@@ -129,19 +129,19 @@ export default function DemandLetterPage() {
               
               <div className="space-y-4">
                 <div>
-                  <Label htmlFor="case">Select Case *</Label>
+                  <Label htmlFor="case" className="">Select Case *</Label>
                   <Select value={selectedCase} onValueChange={setSelectedCase}>
-                    <SelectTrigger>
+                    <SelectTrigger className="">
                       <SelectValue placeholder="Choose a case" />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent className="">
                       {cases.length === 0 ? (
-                        <SelectItem value="none" disabled>
+                        <SelectItem className="" value="none" disabled>
                           No cases available
                         </SelectItem>
                       ) : (
                         cases.map(c => (
-                          <SelectItem key={c.id} value={c.id}>
+                          <SelectItem className="" key={c.id} value={c.id}>
                             {c.case_number} - {c.patients?.last_name}, {c.patients?.first_name}
                           </SelectItem>
                         ))
@@ -151,14 +151,14 @@ export default function DemandLetterPage() {
                 </div>
 
                 <div>
-                  <Label htmlFor="demandType">Demand Type *</Label>
+                  <Label htmlFor="demandType" className="">Demand Type *</Label>
                   <Select value={demandType} onValueChange={(value: any) => setDemandType(value)}>
-                    <SelectTrigger>
+                    <SelectTrigger className="">
                       <SelectValue />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent className="">
                       {Object.entries(DEMAND_LETTER_TYPES).map(([key, value]) => (
-                        <SelectItem key={key} value={key}>
+                        <SelectItem className="" key={key} value={key}>
                           {value.name}
                         </SelectItem>
                       ))}
@@ -170,31 +170,29 @@ export default function DemandLetterPage() {
                 </div>
 
                 <div>
-                  <Label htmlFor="defendant">Defendant Name</Label>
-                  <Input
-                    id="defendant"
+                  <Label htmlFor="defendant" className="">Defendant Name</Label>
+                  <Input className="" id="defendant"
                     value={formData.defendant_name}
-                    onChange={(e) => setFormData({ ...formData, defendant_name: e.target.value })}
+                    type="text" onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, defendant_name: e.target.value })}
                     placeholder="John Doe"
                   />
                 </div>
 
                 <div>
-                  <Label htmlFor="location">Incident Location</Label>
-                  <Input
-                    id="location"
+                  <Label htmlFor="location" className="">Incident Location</Label>
+                  <Input className="" id="location"
                     value={formData.incident_location}
-                    onChange={(e) => setFormData({ ...formData, incident_location: e.target.value })}
+                    type="text" onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, incident_location: e.target.value })}
                     placeholder="123 Main St, City, State"
                   />
                 </div>
 
                 <div>
-                  <Label htmlFor="description">Incident Description</Label>
-                  <Textarea
+                  <Label htmlFor="description" className="">Incident Description</Label>
+                  <Textarea className=""
                     id="description"
                     value={formData.incident_description}
-                    onChange={(e) => setFormData({ ...formData, incident_description: e.target.value })}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, incident_description: e.target.value })}
                     placeholder="Describe how the accident occurred..."
                     rows={3}
                   />
@@ -207,60 +205,56 @@ export default function DemandLetterPage() {
               
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <Label htmlFor="property">Property Damage</Label>
-                  <Input
-                    id="property"
+                  <Label htmlFor="property" className="">Property Damage</Label>
+                  <Input className="" id="property"
                     type="number"
                     value={formData.property_damage}
-                    onChange={(e) => setFormData({ ...formData, property_damage: e.target.value })}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, property_damage: e.target.value })}
                     placeholder="0"
                   />
                 </div>
 
                 <div>
-                  <Label htmlFor="pastWages">Past Lost Wages</Label>
-                  <Input
-                    id="pastWages"
+                  <Label htmlFor="pastWages" className="">Past Lost Wages</Label>
+                  <Input className="" id="pastWages"
                     type="number"
                     value={formData.past_lost_wages}
-                    onChange={(e) => setFormData({ ...formData, past_lost_wages: e.target.value })}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, past_lost_wages: e.target.value })}
                     placeholder="0"
                   />
                 </div>
 
                 <div>
-                  <Label htmlFor="futureWages">Future Lost Wages</Label>
-                  <Input
-                    id="futureWages"
+                  <Label htmlFor="futureWages" className="">Future Lost Wages</Label>
+                  <Input className="" id="futureWages"
                     type="number"
                     value={formData.future_lost_wages}
-                    onChange={(e) => setFormData({ ...formData, future_lost_wages: e.target.value })}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, future_lost_wages: e.target.value })}
                     placeholder="0"
                   />
                 </div>
 
                 <div>
-                  <Label htmlFor="futureMedical">Future Medical Expenses</Label>
-                  <Input
-                    id="futureMedical"
+                  <Label htmlFor="futureMedical" className="">Future Medical Expenses</Label>
+                  <Input className="" id="futureMedical"
                     type="number"
                     value={formData.future_medical_expenses}
-                    onChange={(e) => setFormData({ ...formData, future_medical_expenses: e.target.value })}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, future_medical_expenses: e.target.value })}
                     placeholder="0"
                   />
                 </div>
 
                 <div>
-                  <Label htmlFor="severity">Injury Severity</Label>
+                  <Label htmlFor="severity" className="">Injury Severity</Label>
                   <Select value={formData.injury_severity} onValueChange={(value: any) => 
                     setFormData({ ...formData, injury_severity: value })
                   }>
-                    <SelectTrigger>
+                    <SelectTrigger className="">
                       <SelectValue />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent className="">
                       {Object.entries(INJURY_SEVERITY).map(([key, value]) => (
-                        <SelectItem key={key} value={key}>
+                        <SelectItem className="" key={key} value={key}>
                           {value.description}
                         </SelectItem>
                       ))}
@@ -269,16 +263,16 @@ export default function DemandLetterPage() {
                 </div>
 
                 <div>
-                  <Label htmlFor="liability">Liability Strength</Label>
+                  <Label htmlFor="liability" className="">Liability Strength</Label>
                   <Select value={formData.liability_strength} onValueChange={(value: any) => 
                     setFormData({ ...formData, liability_strength: value })
                   }>
-                    <SelectTrigger>
+                    <SelectTrigger className="">
                       <SelectValue />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent className="">
                       {Object.entries(LIABILITY_STRENGTH).map(([key, value]) => (
-                        <SelectItem key={key} value={key}>
+                        <SelectItem className="" key={key} value={key}>
                           {key.charAt(0).toUpperCase() + key.slice(1)}
                         </SelectItem>
                       ))}
@@ -287,23 +281,20 @@ export default function DemandLetterPage() {
                 </div>
 
                 <div className="col-span-2">
-                  <Label htmlFor="demand">Demand Amount (leave blank for auto-calculation)</Label>
-                  <Input
-                    id="demand"
+                  <Label htmlFor="demand" className="">Demand Amount (leave blank for auto-calculation)</Label>
+                  <Input className="" id="demand"
                     type="number"
                     value={formData.demand_amount}
-                    onChange={(e) => setFormData({ ...formData, demand_amount: e.target.value })}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, demand_amount: e.target.value })}
                     placeholder="Auto-calculated if empty"
                   />
                 </div>
               </div>
             </Card>
 
-            <Button
+            <Button className="w-full" variant="default" size="lg"
               onClick={handleGenerate}
               disabled={!selectedCase || generating}
-              className="w-full"
-              size="lg"
             >
               {generating ? (
                 <>
@@ -376,23 +367,23 @@ export default function DemandLetterPage() {
       ) : (
         <div className="space-y-6">
           {/* Success Banner */}
-          <Alert className="bg-green-50 border-green-200">
+          <Alert className="bg-green-50 border-green-200" variant="default">
             <CheckCircle className="h-4 w-4 text-green-600" />
-            <AlertDescription>
+            <AlertDescription className="">
               <strong>Demand letter generated successfully!</strong> Demand amount: {formatCurrency(generatedLetter.demand_data.demand_amount)}
             </AlertDescription>
           </Alert>
 
           {/* Actions */}
           <div className="flex gap-3">
-            <Button onClick={() => setGeneratedLetter(null)}>
+            <Button className="" variant="default" size="default" onClick={() => setGeneratedLetter(null)}>
               Generate New Letter
             </Button>
-            <Button variant="outline" onClick={handleDownload}>
+            <Button className="" variant="outline" onClick={handleDownload} size="default">
               <Download className="mr-2 h-4 w-4" />
               Download as Markdown
             </Button>
-            <Button variant="outline" onClick={() => setEditing(!editing)}>
+            <Button className="" variant="outline" size="default" onClick={() => setEditing(!editing)}>
               <Edit className="mr-2 h-4 w-4" />
               {editing ? 'View Only' : 'Edit'}
             </Button>
@@ -401,9 +392,9 @@ export default function DemandLetterPage() {
           {/* Letter Preview */}
           <Card className="p-8">
             {editing ? (
-              <Textarea
+              <Textarea className="font-mono text-sm"
                 value={generatedLetter.letter.content}
-                onChange={(e) => {
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                   setGeneratedLetter({
                     ...generatedLetter,
                     letter: {
@@ -413,7 +404,6 @@ export default function DemandLetterPage() {
                   })
                 }}
                 rows={30}
-                className="font-mono text-sm"
               />
             ) : (
               <div className="prose prose-sm max-w-none">

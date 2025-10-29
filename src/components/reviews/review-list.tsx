@@ -138,9 +138,9 @@ export function ReviewList({ caseId, refreshTrigger }: ReviewListProps) {
   // Error state
   if (error) {
     return (
-      <Alert variant="destructive">
+      <Alert className="" variant="destructive">
         <AlertCircle className="h-4 w-4" />
-        <AlertDescription>{error}</AlertDescription>
+        <AlertDescription className="">{error}</AlertDescription>
       </Alert>
     )
   }
@@ -175,10 +175,10 @@ export function ReviewList({ caseId, refreshTrigger }: ReviewListProps) {
             {/* Header: Status, Role, Timestamp */}
             <div className="flex items-start justify-between mb-4">
               <div className="flex items-center gap-2 flex-wrap">
-                <Badge className={getStatusBadgeClass(review.status)}>
+                <Badge className={getStatusBadgeClass(review.status)} variant="default">
                   {formatStatus(review.status)}
                 </Badge>
-                <Badge variant="outline">
+                <Badge className="" variant="outline">
                   <User className="mr-1 h-3 w-3" />
                   {review.role.charAt(0).toUpperCase() + review.role.slice(1)}
                 </Badge>

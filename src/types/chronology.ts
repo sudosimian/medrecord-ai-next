@@ -11,6 +11,8 @@ export interface MedicalEvent {
   significance_score?: number // 1-5
   icd_codes?: string[]
   cpt_codes?: string[]
+  page_reference?: string // Page number or reference in source document
+  bates_number?: string // Bates numbering for legal documents
   is_duplicate: boolean
   created_at: string
   updated_at: string

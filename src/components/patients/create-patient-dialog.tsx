@@ -69,7 +69,7 @@ export function CreatePatientDialog({ onPatientCreated }: CreatePatientDialogPro
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline">
+        <Button className="" variant="outline" size="default">
           <Plus className="mr-2 h-4 w-4" />
           New Patient
         </Button>
@@ -81,21 +81,19 @@ export function CreatePatientDialog({ onPatientCreated }: CreatePatientDialogPro
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <Label htmlFor="first_name">First Name *</Label>
-              <Input
-                id="first_name"
+              <Label htmlFor="first_name" className="">First Name *</Label>
+              <Input className="" id="first_name"
                 value={formData.first_name}
-                onChange={(e) => setFormData({ ...formData, first_name: e.target.value })}
+                onChange={(e) = type="text"> setFormData({ ...formData, first_name: e.target.value })}
                 required
               />
             </div>
 
             <div>
-              <Label htmlFor="last_name">Last Name *</Label>
-              <Input
-                id="last_name"
+              <Label htmlFor="last_name" className="">Last Name *</Label>
+              <Input className="" id="last_name"
                 value={formData.last_name}
-                onChange={(e) => setFormData({ ...formData, last_name: e.target.value })}
+                onChange={(e) = type="text"> setFormData({ ...formData, last_name: e.target.value })}
                 required
               />
             </div>
@@ -103,9 +101,8 @@ export function CreatePatientDialog({ onPatientCreated }: CreatePatientDialogPro
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <Label htmlFor="date_of_birth">Date of Birth</Label>
-              <Input
-                id="date_of_birth"
+              <Label htmlFor="date_of_birth" className="">Date of Birth</Label>
+              <Input className="" id="date_of_birth"
                 type="date"
                 value={formData.date_of_birth}
                 onChange={(e) => setFormData({ ...formData, date_of_birth: e.target.value })}
@@ -113,9 +110,8 @@ export function CreatePatientDialog({ onPatientCreated }: CreatePatientDialogPro
             </div>
 
             <div>
-              <Label htmlFor="phone">Phone</Label>
-              <Input
-                id="phone"
+              <Label htmlFor="phone" className="">Phone</Label>
+              <Input className="" id="phone"
                 type="tel"
                 value={formData.phone}
                 onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
@@ -124,9 +120,8 @@ export function CreatePatientDialog({ onPatientCreated }: CreatePatientDialogPro
           </div>
 
           <div>
-            <Label htmlFor="email">Email</Label>
-            <Input
-              id="email"
+            <Label htmlFor="email" className="">Email</Label>
+            <Input className="" id="email"
               type="email"
               value={formData.email}
               onChange={(e) => setFormData({ ...formData, email: e.target.value })}
@@ -134,47 +129,43 @@ export function CreatePatientDialog({ onPatientCreated }: CreatePatientDialogPro
           </div>
 
           <div>
-            <Label htmlFor="address">Address</Label>
-            <Input
-              id="address"
+            <Label htmlFor="address" className="">Address</Label>
+            <Input className="" id="address"
               value={formData.address}
-              onChange={(e) => setFormData({ ...formData, address: e.target.value })}
+              onChange={(e) = type="text"> setFormData({ ...formData, address: e.target.value })}
             />
           </div>
 
           <div className="grid grid-cols-3 gap-4">
             <div>
-              <Label htmlFor="city">City</Label>
-              <Input
-                id="city"
+              <Label htmlFor="city" className="">City</Label>
+              <Input className="" id="city"
                 value={formData.city}
-                onChange={(e) => setFormData({ ...formData, city: e.target.value })}
+                onChange={(e) = type="text"> setFormData({ ...formData, city: e.target.value })}
               />
             </div>
 
             <div>
-              <Label htmlFor="state">State</Label>
-              <Input
-                id="state"
+              <Label htmlFor="state" className="">State</Label>
+              <Input className="" id="state"
                 value={formData.state}
-                onChange={(e) => setFormData({ ...formData, state: e.target.value })}
+                onChange={(e) = type="text"> setFormData({ ...formData, state: e.target.value })}
                 maxLength={2}
               />
             </div>
 
             <div>
-              <Label htmlFor="zip">ZIP</Label>
-              <Input
-                id="zip"
+              <Label htmlFor="zip" className="">ZIP</Label>
+              <Input className="" id="zip"
                 value={formData.zip}
-                onChange={(e) => setFormData({ ...formData, zip: e.target.value })}
+                onChange={(e) = type="text"> setFormData({ ...formData, zip: e.target.value })}
               />
             </div>
           </div>
 
           <div>
-            <Label htmlFor="notes">Notes</Label>
-            <Textarea
+            <Label htmlFor="notes" className="">Notes</Label>
+            <Textarea className=""
               id="notes"
               value={formData.notes}
               onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
@@ -183,10 +174,10 @@ export function CreatePatientDialog({ onPatientCreated }: CreatePatientDialogPro
           </div>
 
           <div className="flex justify-end gap-2">
-            <Button type="button" variant="outline" onClick={() => setOpen(false)}>
+            <Button className="" type="button" variant="outline" size="default" onClick={() => setOpen(false)}>
               Cancel
             </Button>
-            <Button type="submit" disabled={loading}>
+            <Button className="" type="submit" disabled={loading} variant="default" size="default">
               {loading ? 'Creating...' : 'Create Patient'}
             </Button>
           </div>

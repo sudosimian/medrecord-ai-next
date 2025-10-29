@@ -167,7 +167,7 @@ export function DocumentList({ patientId, caseId, refreshTrigger }: DocumentList
                   </div>
                 </TableCell>
                 <TableCell>
-                  <Badge className={getDocumentTypeColor(doc.document_type)}>
+                  <Badge className={getDocumentTypeColor(doc.document_type)} variant="default">
                     {getDocumentTypeLabel(doc.document_type)}
                   </Badge>
                 </TableCell>
@@ -196,11 +196,10 @@ export function DocumentList({ patientId, caseId, refreshTrigger }: DocumentList
                 </TableCell>
                 <TableCell className="text-right">
                   <div className="flex justify-end gap-2">
-                    <Button variant="ghost" size="sm">
+                    <Button className="" variant="ghost" size="sm">
                       <Download className="h-4 w-4" />
                     </Button>
-                    <Button
-                      variant="ghost"
+                    <Button className="" variant="ghost"
                       size="sm"
                       onClick={() => setDeleteId(doc.id)}
                     >

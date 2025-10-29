@@ -220,7 +220,7 @@ export function JobProgress({ caseId }: JobProgressProps) {
                 <span className="text-xs font-medium text-gray-700">
                   {formatJobType(job.type)}
                 </span>
-                <Badge className={`text-xs px-1.5 py-0 ${getStatusBadgeClass(job.status)}`}>
+                <Badge className={`text-xs px-1.5 py-0 ${getStatusBadgeClass(job.status)}`} variant="default">
                   <span className="flex items-center gap-1">
                     {getStatusIcon(job.status)}
                     {formatStatus(job.status)}

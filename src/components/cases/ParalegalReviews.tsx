@@ -144,12 +144,12 @@ export function ParalegalReviews({ caseId }: ParalegalReviewsProps) {
         {error && (
           <Alert variant="destructive" className="mb-4">
             <AlertCircle className="h-4 w-4" />
-            <AlertDescription>{error}</AlertDescription>
+            <AlertDescription className="">{error}</AlertDescription>
           </Alert>
         )}
 
         {successMessage && (
-          <Alert className="mb-4 border-green-500 bg-green-50">
+          <Alert className="mb-4 border-green-500 bg-green-50" variant="default">
             <CheckCircle2 className="h-4 w-4 text-green-600" />
             <AlertDescription className="text-green-800">
               {successMessage}
@@ -159,8 +159,8 @@ export function ParalegalReviews({ caseId }: ParalegalReviewsProps) {
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <Label htmlFor="review_summary">Overall Review Summary</Label>
-            <Textarea
+            <Label htmlFor="review_summary" className="">Overall Review Summary</Label>
+            <Textarea className=""
               id="review_summary"
               placeholder="Provide an overall assessment of case strength, readiness for trial, settlement potential, or areas requiring attention..."
               value={formData.review_summary}
@@ -171,8 +171,8 @@ export function ParalegalReviews({ caseId }: ParalegalReviewsProps) {
           </div>
 
           <div>
-            <Label htmlFor="missing_documents">Missing Documents</Label>
-            <Textarea
+            <Label htmlFor="missing_documents" className="">Missing Documents</Label>
+            <Textarea className=""
               id="missing_documents"
               placeholder="List any missing or incomplete medical records, bills, depositions, expert reports, or other documentation..."
               value={formData.missing_documents}
@@ -183,8 +183,8 @@ export function ParalegalReviews({ caseId }: ParalegalReviewsProps) {
           </div>
 
           <div>
-            <Label htmlFor="timeline_gaps">Timeline Gaps</Label>
-            <Textarea
+            <Label htmlFor="timeline_gaps" className="">Timeline Gaps</Label>
+            <Textarea className=""
               id="timeline_gaps"
               placeholder="Identify gaps in the medical timeline, treatment periods without records, or inconsistencies that need clarification..."
               value={formData.timeline_gaps}
@@ -195,8 +195,8 @@ export function ParalegalReviews({ caseId }: ParalegalReviewsProps) {
           </div>
 
           <div>
-            <Label htmlFor="recommended_actions">Recommended Actions</Label>
-            <Textarea
+            <Label htmlFor="recommended_actions" className="">Recommended Actions</Label>
+            <Textarea className=""
               id="recommended_actions"
               placeholder="Suggest next steps: additional records to request, depositions to schedule, expert witnesses to retain, etc..."
               value={formData.recommended_actions}
@@ -207,7 +207,7 @@ export function ParalegalReviews({ caseId }: ParalegalReviewsProps) {
           </div>
 
           <div className="flex justify-end">
-            <Button type="submit" disabled={submitting}>
+            <Button className="" type="submit" disabled={submitting} variant="default" size="default">
               {submitting ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />

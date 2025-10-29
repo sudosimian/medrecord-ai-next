@@ -149,13 +149,13 @@ export function ReviewForm({ caseId, onCreated }: ReviewFormProps) {
       {error && (
         <Alert variant="destructive" className="mb-4">
           <AlertCircle className="h-4 w-4" />
-          <AlertDescription>{error}</AlertDescription>
+          <AlertDescription className="">{error}</AlertDescription>
         </Alert>
       )}
 
       {/* Success Alert */}
       {successMessage && (
-        <Alert className="mb-4 border-green-500 bg-green-50">
+        <Alert className="mb-4 border-green-500 bg-green-50" variant="default">
           <CheckCircle2 className="h-4 w-4 text-green-600" />
           <AlertDescription className="text-green-800">
             {successMessage}
@@ -166,7 +166,7 @@ export function ReviewForm({ caseId, onCreated }: ReviewFormProps) {
       <form onSubmit={handleSubmit} className="space-y-4">
         {/* Role Selection */}
         <div>
-          <Label htmlFor="role">Reviewer Role *</Label>
+          <Label htmlFor="role" className="">Reviewer Role *</Label>
           <Select
             value={formData.role}
             onValueChange={(value) => setFormData({ ...formData, role: value as 'paralegal' | 'attorney' })}
@@ -175,15 +175,15 @@ export function ReviewForm({ caseId, onCreated }: ReviewFormProps) {
               <SelectValue placeholder="Select your role" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="paralegal">Paralegal</SelectItem>
-              <SelectItem value="attorney">Attorney</SelectItem>
+              <SelectItem className="" value="paralegal">Paralegal</SelectItem>
+              <SelectItem className="" value="attorney">Attorney</SelectItem>
             </SelectContent>
           </Select>
         </div>
 
         {/* Status Selection */}
         <div>
-          <Label htmlFor="status">Review Status</Label>
+          <Label htmlFor="status" className="">Review Status</Label>
           <Select
             value={formData.status}
             onValueChange={(value) => setFormData({ ...formData, status: value as any })}
@@ -192,18 +192,18 @@ export function ReviewForm({ caseId, onCreated }: ReviewFormProps) {
               <SelectValue placeholder="Select status" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="open">Open</SelectItem>
-              <SelectItem value="in_review">In Review</SelectItem>
-              <SelectItem value="approved">Approved</SelectItem>
-              <SelectItem value="needs_records">Needs Records</SelectItem>
+              <SelectItem className="" value="open">Open</SelectItem>
+              <SelectItem className="" value="in_review">In Review</SelectItem>
+              <SelectItem className="" value="approved">Approved</SelectItem>
+              <SelectItem className="" value="needs_records">Needs Records</SelectItem>
             </SelectContent>
           </Select>
         </div>
 
         {/* Summary */}
         <div>
-          <Label htmlFor="summary">Review Summary *</Label>
-          <Textarea
+          <Label htmlFor="summary" className="">Review Summary *</Label>
+          <Textarea className=""
             id="summary"
             placeholder="Provide an overall assessment of case readiness, strength, or areas requiring attention..."
             value={formData.summary}
@@ -215,8 +215,8 @@ export function ReviewForm({ caseId, onCreated }: ReviewFormProps) {
 
         {/* Missing Documents (comma-separated tags) */}
         <div>
-          <Label htmlFor="missing_docs">Missing Documents (comma-separated)</Label>
-          <Textarea
+          <Label htmlFor="missing_docs" className="">Missing Documents (comma-separated)</Label>
+          <Textarea className=""
             id="missing_docs"
             placeholder="e.g., MRI Report from 2023-05-10, Billing statement Dr. Smith, Deposition transcript"
             value={missingDocsText}
@@ -231,8 +231,8 @@ export function ReviewForm({ caseId, onCreated }: ReviewFormProps) {
 
         {/* Timeline Gaps (comma-separated tags) */}
         <div>
-          <Label htmlFor="timeline_gaps">Timeline Gaps (comma-separated)</Label>
-          <Textarea
+          <Label htmlFor="timeline_gaps" className="">Timeline Gaps (comma-separated)</Label>
+          <Textarea className=""
             id="timeline_gaps"
             placeholder="e.g., Missing visits June 2023, Gap between 2023-07-01 and 2023-09-15, No records for Q3"
             value={timelineGapsText}
@@ -247,8 +247,8 @@ export function ReviewForm({ caseId, onCreated }: ReviewFormProps) {
 
         {/* Recommended Actions (comma-separated tags) */}
         <div>
-          <Label htmlFor="actions">Recommended Actions (comma-separated)</Label>
-          <Textarea
+          <Label htmlFor="actions" className="">Recommended Actions (comma-separated)</Label>
+          <Textarea className=""
             id="actions"
             placeholder="e.g., Request records from Hospital X, Schedule deposition with witness Y, Retain expert"
             value={actionsText}
@@ -263,8 +263,8 @@ export function ReviewForm({ caseId, onCreated }: ReviewFormProps) {
 
         {/* Notes */}
         <div>
-          <Label htmlFor="notes">Additional Notes</Label>
-          <Textarea
+          <Label htmlFor="notes" className="">Additional Notes</Label>
+          <Textarea className=""
             id="notes"
             placeholder="Any additional observations or comments..."
             value={formData.notes}
@@ -276,7 +276,7 @@ export function ReviewForm({ caseId, onCreated }: ReviewFormProps) {
 
         {/* Submit Button */}
         <div className="flex justify-end">
-          <Button type="submit" disabled={submitting}>
+          <Button className="" type="submit" disabled={submitting} variant="default" size="default">
             {submitting ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />

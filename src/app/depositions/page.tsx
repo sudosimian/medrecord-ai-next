@@ -129,14 +129,14 @@ export default function DepositionsPage() {
         <h2 className="text-lg font-semibold mb-4">Process New Deposition</h2>
         <div className="space-y-4">
           <div>
-            <Label>Select Case</Label>
+            <Label className="">Select Case</Label>
             <Select value={selectedCase} onValueChange={handleCaseChange}>
-              <SelectTrigger>
+              <SelectTrigger className="">
                 <SelectValue placeholder="Choose a case..." />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className="">
                 {cases.map((c) => (
-                  <SelectItem key={c.id} value={c.id}>
+                  <SelectItem className="" key={c.id} value={c.id}>
                     {c.case_number} - {c.patients?.last_name}, {c.patients?.first_name}
                   </SelectItem>
                 ))}
@@ -147,14 +147,14 @@ export default function DepositionsPage() {
           {selectedCase && (
             <>
               <div>
-                <Label>Deposition Transcript Document</Label>
+                <Label className="">Deposition Transcript Document</Label>
                 <Select value={selectedDocument} onValueChange={setSelectedDocument}>
-                  <SelectTrigger>
+                  <SelectTrigger className="">
                     <SelectValue placeholder="Choose transcript..." />
                   </SelectTrigger>
-                  <SelectContent>
+                  <SelectContent className="">
                     {documents.map((doc) => (
-                      <SelectItem key={doc.id} value={doc.id}>
+                      <SelectItem className="" key={doc.id} value={doc.id}>
                         {doc.original_filename}
                       </SelectItem>
                     ))}
@@ -163,40 +163,38 @@ export default function DepositionsPage() {
               </div>
 
               <div>
-                <Label>Witness Name</Label>
-                <Input
-                  value={witnessName}
-                  onChange={(e) => setWitnessName(e.target.value)}
+                <Label className="">Witness Name</Label>
+                <Input className="" value={witnessName}
+                  type="text" onChange={(e: React.ChangeEvent<HTMLInputElement>) => setWitnessName(e.target.value)}
                   placeholder="e.g., Dr. John Smith"
                 />
               </div>
 
               <div>
-                <Label>Witness Role</Label>
+                <Label className="">Witness Role</Label>
                 <Select value={witnessRole} onValueChange={setWitnessRole}>
-                  <SelectTrigger>
+                  <SelectTrigger className="">
                     <SelectValue placeholder="Select role..." />
                   </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="plaintiff">Plaintiff</SelectItem>
-                    <SelectItem value="defendant">Defendant</SelectItem>
-                    <SelectItem value="expert">Expert Witness</SelectItem>
-                    <SelectItem value="fact_witness">Fact Witness</SelectItem>
-                    <SelectItem value="treating_physician">Treating Physician</SelectItem>
+                  <SelectContent className="">
+                    <SelectItem className="" value="plaintiff">Plaintiff</SelectItem>
+                    <SelectItem className="" value="defendant">Defendant</SelectItem>
+                    <SelectItem className="" value="expert">Expert Witness</SelectItem>
+                    <SelectItem className="" value="fact_witness">Fact Witness</SelectItem>
+                    <SelectItem className="" value="treating_physician">Treating Physician</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
 
               <div>
-                <Label>Deposition Date</Label>
-                <Input
-                  type="date"
+                <Label className="">Deposition Date</Label>
+                <Input className="" type="date"
                   value={depositionDate}
-                  onChange={(e) => setDepositionDate(e.target.value)}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => setDepositionDate(e.target.value)}
                 />
               </div>
 
-              <Button
+              <Button className="" variant="default" size="default"
                 onClick={processDeposition}
                 disabled={processing}
               >
@@ -233,7 +231,7 @@ export default function DepositionsPage() {
                   <div className="flex items-center gap-3 mb-2">
                     <Users className="h-5 w-5 text-gray-600" />
                     <h3 className="text-lg font-semibold">{dep.witness.name}</h3>
-                    <Badge className={getRoleBadgeColor(dep.witness.role)}>
+                    <Badge className={getRoleBadgeColor(dep.witness.role)} variant="default">
                       {dep.witness.role.replace('_', ' ')}
                     </Badge>
                   </div>
@@ -241,7 +239,7 @@ export default function DepositionsPage() {
                     Date: {new Date(dep.deposition_date).toLocaleDateString()} | Pages: {dep.total_pages}
                   </p>
                 </div>
-                <Button
+                <Button className="" variant="default" size="default"
                   onClick={async () => {
                     try {
                       const response = await fetch('/api/deposition/export', {

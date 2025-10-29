@@ -195,21 +195,21 @@ export default function ChronologyPage() {
         <div className="space-y-4">
           <div>
             <label className="text-sm font-medium mb-2 block">Select Case</label>
-            <Select value={selectedCase} onValueChange={(value) => {
+            <Select value={selectedCase} onValueChange={(value: string) => {
               setSelectedCase(value)
               fetchChronology(value)
             }}>
-              <SelectTrigger>
+              <SelectTrigger className="">
                 <SelectValue placeholder="Choose a case to analyze" />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className="">
                 {cases.length === 0 ? (
-                  <SelectItem value="none" disabled>
+                  <SelectItem className="" value="none" disabled>
                     No cases available - Create a case first
                   </SelectItem>
                 ) : (
                   cases.map(c => (
-                    <SelectItem key={c.id} value={c.id}>
+                    <SelectItem className="" key={c.id} value={c.id}>
                       {c.case_number} - {c.patients?.last_name}, {c.patients?.first_name}
                     </SelectItem>
                   ))
@@ -219,7 +219,7 @@ export default function ChronologyPage() {
           </div>
 
           <div className="flex gap-3">
-            <Button
+            <Button className="" variant="default" size="default"
               onClick={processDocuments}
               disabled={!selectedCase || processing}
             >
@@ -236,10 +236,9 @@ export default function ChronologyPage() {
               )}
             </Button>
 
-            <Button
+            <Button className="" variant="outline" size="default"
               onClick={applyBatesNumbering}
               disabled={!selectedCase || applyingBates}
-              variant="outline"
             >
               {applyingBates ? (
                 <>
@@ -254,25 +253,23 @@ export default function ChronologyPage() {
               )}
             </Button>
 
-                <Button variant="outline" disabled={!selectedCase || loading} onClick={() => fetchChronology(selectedCase)}>
+                <Button className="" variant="outline" disabled={!selectedCase || loading} size="default" onClick={() => fetchChronology(selectedCase)}>
                   Refresh
                 </Button>
 
                 {events.length > 0 && (
                   <>
-                    <Button
+                    <Button className="" variant="outline" size="default"
                       onClick={() => exportChronology('excel')}
                       disabled={!selectedCase}
-                      variant="outline"
                     >
                       <Download className="mr-2 h-4 w-4" />
                       Export Excel
                     </Button>
 
-                    <Button
+                    <Button className="" variant="outline" size="default"
                       onClick={() => exportChronology('word')}
                       disabled={!selectedCase}
-                      variant="outline"
                     >
                       <Download className="mr-2 h-4 w-4" />
                       Export Word
@@ -282,7 +279,7 @@ export default function ChronologyPage() {
               </div>
 
           {batesInfo && (
-            <Alert className="bg-blue-50 border-blue-200">
+            <Alert className="bg-blue-50 border-blue-200" variant="default">
               <LinkIcon className="h-4 w-4 text-blue-600" />
               <AlertDescription className="text-blue-900">
                 <strong>Bates numbering applied:</strong> {batesInfo.totalPages} pages numbered with prefix "{batesInfo.prefix}". 
@@ -292,9 +289,9 @@ export default function ChronologyPage() {
           )}
 
           {stats && (
-            <Alert>
+            <Alert className="" variant="default">
               <CheckCircle className="h-4 w-4" />
-              <AlertDescription>
+              <AlertDescription className="">
                 Processed {stats.documentsProcessed} documents, extracted {stats.totalEvents} events
                 {stats.duplicatesFound > 0 && ` (${stats.duplicatesFound} duplicates removed)`}.
                 Processing time: {(stats.processingTime / 1000).toFixed(1)}s
@@ -318,12 +315,12 @@ export default function ChronologyPage() {
                 <SelectTrigger className="w-40">
                   <SelectValue />
                 </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Events</SelectItem>
-                  <SelectItem value="critical">Critical</SelectItem>
-                  <SelectItem value="important">Important</SelectItem>
-                  <SelectItem value="routine">Routine</SelectItem>
-                  <SelectItem value="administrative">Administrative</SelectItem>
+                <SelectContent className="">
+                  <SelectItem className="" value="all">All Events</SelectItem>
+                  <SelectItem className="" value="critical">Critical</SelectItem>
+                  <SelectItem className="" value="important">Important</SelectItem>
+                  <SelectItem className="" value="routine">Routine</SelectItem>
+                  <SelectItem className="" value="administrative">Administrative</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -354,11 +351,11 @@ export default function ChronologyPage() {
                             <span className="font-medium">
                               {formatEventDate(event.event_date, event.event_time || undefined)}
                             </span>
-                            <Badge className={colorClass}>
+                            <Badge className={colorClass} variant="default">
                               {significance}
                             </Badge>
                             {event.event_type && (
-                              <Badge variant="outline">{event.event_type}</Badge>
+                              <Badge className="" variant="outline">{event.event_type}</Badge>
                             )}
                           </div>
                           

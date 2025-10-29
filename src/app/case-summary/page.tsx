@@ -141,12 +141,12 @@ export default function CaseSummaryPage() {
           <div>
             <label className="block text-sm font-medium mb-2">Select Case</label>
             <Select value={selectedCase} onValueChange={handleCaseSelect}>
-              <SelectTrigger>
+              <SelectTrigger className="">
                 <SelectValue placeholder="Choose a case..." />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className="">
                 {cases.map((c) => (
-                  <SelectItem key={c.id} value={c.id}>
+                  <SelectItem className="" key={c.id} value={c.id}>
                     {c.case_number} - {c.patients?.first_name} {c.patients?.last_name}
                   </SelectItem>
                 ))}
@@ -155,7 +155,7 @@ export default function CaseSummaryPage() {
           </div>
 
           <div className="flex gap-3">
-            <Button
+            <Button className="" variant="default" size="default"
               onClick={generateSummary}
               disabled={!selectedCase || generating}
             >
@@ -173,7 +173,7 @@ export default function CaseSummaryPage() {
             </Button>
 
             {summary && (
-              <Button variant="outline" disabled={!selectedCase || loading}>
+              <Button className="" variant="outline" size="default" disabled={!selectedCase || loading}>
                 Refresh
               </Button>
             )}
@@ -208,7 +208,7 @@ export default function CaseSummaryPage() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-gray-600">Liability</p>
-                  <Badge className={`${getLiabilityColor(summaryData.liability_assessment.strength)} mt-1`}>
+                  <Badge className={`${getLiabilityColor(summaryData.liability_assessment.strength)} mt-1`} variant="default">
                     {summaryData.liability_assessment.strength}
                   </Badge>
                   <p className="text-xs text-gray-500 mt-1">
@@ -223,7 +223,7 @@ export default function CaseSummaryPage() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-gray-600">Injury Severity</p>
-                  <Badge className={`${getSeverityColor(summaryData.injury_summary.severity)} mt-1`}>
+                  <Badge className={`${getSeverityColor(summaryData.injury_summary.severity)} mt-1`} variant="default">
                     {summaryData.injury_summary.severity}
                   </Badge>
                   <p className="text-xs text-gray-500 mt-1">
@@ -272,7 +272,7 @@ export default function CaseSummaryPage() {
             <div className="space-y-2">
               <div className="flex items-center gap-2">
                 <span className="text-gray-600">Strength:</span>
-                <Badge className={getLiabilityColor(summaryData.liability_assessment.strength)}>
+                <Badge className={getLiabilityColor(summaryData.liability_assessment.strength)} variant="default">
                   {summaryData.liability_assessment.strength} ({summaryData.liability_assessment.score}/100)
                 </Badge>
               </div>
@@ -299,7 +299,7 @@ export default function CaseSummaryPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <p className="text-sm text-gray-600">Severity</p>
-                <Badge className={`${getSeverityColor(summaryData.injury_summary.severity)} mt-1`}>
+                <Badge className={`${getSeverityColor(summaryData.injury_summary.severity)} mt-1`} variant="default">
                   {summaryData.injury_summary.severity}
                 </Badge>
               </div>
@@ -309,7 +309,7 @@ export default function CaseSummaryPage() {
               </div>
               <div>
                 <p className="text-sm text-gray-600">Permanent Impairment</p>
-                <Badge className={summaryData.injury_summary.permanent_impairment ? 'bg-red-500 text-white' : 'bg-green-500 text-white'}>
+                <Badge className={summaryData.injury_summary.permanent_impairment ? 'bg-red-500 text-white' : 'bg-green-500 text-white'} variant="default">
                   {summaryData.injury_summary.permanent_impairment ? 'Yes' : 'No'}
                 </Badge>
               </div>
@@ -318,7 +318,7 @@ export default function CaseSummaryPage() {
               <p className="text-sm font-medium text-gray-700 mb-2">Key Injuries:</p>
               <div className="flex flex-wrap gap-2">
                 {summaryData.injury_summary.key_injuries.map((injury: string, i: number) => (
-                  <Badge key={i} variant="outline">{injury}</Badge>
+                  <Badge className="" key={i} variant="outline">{injury}</Badge>
                 ))}
               </div>
             </div>

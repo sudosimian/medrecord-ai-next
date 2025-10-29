@@ -69,12 +69,12 @@ export default function SynopsisPage() {
           <div>
             <label className="text-sm font-medium">Select Case</label>
             <Select value={selectedCase} onValueChange={handleCaseChange}>
-              <SelectTrigger>
+              <SelectTrigger className="">
                 <SelectValue placeholder="Choose a case..." />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className="">
                 {cases.map((c) => (
-                  <SelectItem key={c.id} value={c.id}>
+                  <SelectItem className="" key={c.id} value={c.id}>
                     {c.case_number} - {c.patients?.last_name}, {c.patients?.first_name}
                   </SelectItem>
                 ))}
@@ -97,7 +97,7 @@ export default function SynopsisPage() {
                 <TrendingUp className="h-8 w-8 text-blue-600" />
                 <div>
                   <p className="text-sm text-gray-600">Case Strength</p>
-                  <Badge className={getCaseStrengthColor(synopsis.case_strength)}>
+                  <Badge className={getCaseStrengthColor(synopsis.case_strength)} variant="default">
                     {synopsis.case_strength}
                   </Badge>
                 </div>

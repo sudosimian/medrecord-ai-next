@@ -69,12 +69,12 @@ export default function MissingRecordsPage() {
           <div>
             <label className="text-sm font-medium">Select Case</label>
             <Select value={selectedCase} onValueChange={handleCaseChange}>
-              <SelectTrigger>
+              <SelectTrigger className="">
                 <SelectValue placeholder="Choose a case..." />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className="">
                 {cases.map((c) => (
-                  <SelectItem key={c.id} value={c.id}>
+                  <SelectItem className="" key={c.id} value={c.id}>
                     {c.case_number} - {c.patients?.last_name}, {c.patients?.first_name}
                   </SelectItem>
                 ))}
@@ -85,7 +85,7 @@ export default function MissingRecordsPage() {
       </Card>
 
       {missingRecords.length > 0 && (
-        <Alert className="bg-amber-50 border-amber-200">
+        <Alert className="bg-amber-50 border-amber-200" variant="default">
           <AlertCircle className="h-4 w-4 text-amber-600" />
           <AlertDescription className="text-amber-900">
             Found {missingRecords.length} potentially missing records. Review and request from providers as needed.
@@ -105,7 +105,7 @@ export default function MissingRecordsPage() {
                   </div>
                   <p className="text-gray-700">{record.description}</p>
                 </div>
-                <Badge className={getImportanceColor(record.importance)}>
+                <Badge className={getImportanceColor(record.importance)} variant="default">
                   {record.importance}
                 </Badge>
               </div>

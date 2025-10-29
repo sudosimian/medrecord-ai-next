@@ -72,21 +72,20 @@ export default function LoginPage() {
 
         {error && (
           <Alert variant="destructive" className="mb-4">
-            <AlertDescription>{error}</AlertDescription>
+            <AlertDescription className="">{error}</AlertDescription>
           </Alert>
         )}
 
         {message && (
-          <Alert className="mb-4">
-            <AlertDescription>{message}</AlertDescription>
+          <Alert className="mb-4" variant="default">
+            <AlertDescription className="">{message}</AlertDescription>
           </Alert>
         )}
 
         <form onSubmit={handleAuth} className="space-y-4">
           <div>
-            <Label htmlFor="email">Email</Label>
-            <Input
-              id="email"
+            <Label htmlFor="email" className="">Email</Label>
+            <Input className="" id="email"
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
@@ -96,9 +95,8 @@ export default function LoginPage() {
           </div>
 
           <div>
-            <Label htmlFor="password">Password</Label>
-            <Input
-              id="password"
+            <Label htmlFor="password" className="">Password</Label>
+            <Input className="" id="password"
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
@@ -108,7 +106,7 @@ export default function LoginPage() {
             />
           </div>
 
-          <Button type="submit" className="w-full" disabled={loading}>
+          <Button type="submit" className="w-full" disabled={loading} variant="default" size="default">
             {loading ? 'Loading...' : isSignUp ? 'Sign Up' : 'Sign In'}
           </Button>
         </form>

@@ -20,6 +20,7 @@ export interface DemandLetterData {
   plaintiff_name: string
   defendant_name?: string
   attorney_name?: string
+  attorney_firm?: string
   insurance_company?: string
   claim_number?: string
   
@@ -30,14 +31,19 @@ export interface DemandLetterData {
   
   // Medical
   chronology_summary: string
+  injuries?: string[] // Array of injury types (e.g., ['cervical strain', 'soft tissue'])
   total_medical_expenses: number
+  medical_expenses?: number // Alias for total_medical_expenses
   future_medical_expenses: number
   
   // Damages
   past_lost_wages: number
+  lost_wages?: number // Alias for past_lost_wages
   future_lost_wages: number
   property_damage: number
   pain_suffering_multiplier: number
+  pain_suffering?: number // Calculated pain & suffering amount
+  total_damages?: number // Total of all damages
   
   // Liability
   liability_theory?: string
@@ -46,7 +52,13 @@ export interface DemandLetterData {
   
   // Settlement
   demand_amount: number
+  policy_limits?: number // Known or estimated policy limits
+  policy_limits_demand?: boolean // Flag for policy limits demand type
+  settlement_deadline?: string // ISO date string for deadline
   comparable_cases?: ComparableCase[]
+  
+  // Jurisdiction (for state-specific templates)
+  jurisdiction?: string // State code (e.g., 'CA', 'NY', 'TX')
 }
 
 export interface ComparableCase {
