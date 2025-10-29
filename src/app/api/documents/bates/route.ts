@@ -35,7 +35,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Use patient last name or custom prefix
-    const batesPrefix = prefix || caseData.patients?.last_name?.toUpperCase() || 'CASE'
+    const batesPrefix = prefix || (caseData.patients as any)?.[0]?.last_name?.toUpperCase() || 'CASE'
 
     // Get all documents for case
     const { data: documents, error: docsError } = await supabase

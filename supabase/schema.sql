@@ -394,3 +394,119 @@ CREATE INDEX idx_depositions_user_id ON public.depositions(user_id);
 CREATE INDEX idx_reviews_case_id ON public.reviews(case_id);
 CREATE INDEX idx_reviews_user_id ON public.reviews(user_id);
 
+-- =========================
+-- REVIEWS: Paralegal/Attorney review records
+-- Purpose: track human-in-the-loop feedback on a case (gaps, actions, notes)
+-- =========================
+CREATE TABLE IF NOT EXISTS public.reviews (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  case_id uuid NOT NULL REFERENCES public.cases(id) ON DELETE CASCADE,
+  user_id uuid NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+  role text CHECK (role IN ('paralegal','attorney')) NOT NULL,  -- reviewer role
+  status text NOT NULL DEFAULT 'open' CHECK (status IN ('open','in_review','approved','needs_records')),
+  summary text,                              -- short summary of findings
+  missing_documents jsonb NOT NULL DEFAULT '[]'::jsonb,  -- list of doc types/records still needed
+  timeline_gaps jsonb NOT NULL DEFAULT '[]'::jsonb,      -- places dates/visits are missing
+  recommended_actions jsonb NOT NULL DEFAULT '[]'::jsonb,-- next steps (request X, follow-up, etc.)
+  notes text,                                  -- freeform notes
+  created_at timestamptz DEFAULT now(),
+  updated_at timestamptz DEFAULT now()
+);
+ALTER TABLE public.reviews ENABLE ROW LEVEL SECURITY;
+
+-- RLS: reviewers can see their own; case owners can see reviews on their cases
+CREATE POLICY "reviewer_read_own_or_case_owner" ON public.reviews
+  FOR SELECT TO authenticated
+  USING (auth.uid() = user_id
+     OR EXISTS (SELECT 1 FROM public.cases c WHERE c.id = case_id AND c.user_id = auth.uid()));
+
+CREATE POLICY "reviewer_insert_own" ON public.reviews
+  FOR INSERT TO authenticated
+  WITH CHECK (auth.uid() = user_id);
+
+CREATE POLICY "reviewer_update_own" ON public.reviews
+  FOR UPDATE TO authenticated
+  USING (auth.uid() = user_id)
+  WITH CHECK (auth.uid() = user_id);
+
+CREATE INDEX IF NOT EXISTS idx_reviews_case_id ON public.reviews(case_id);
+CREATE INDEX IF NOT EXISTS idx_reviews_user_id ON public.reviews(user_id);
+CREATE INDEX IF NOT EXISTS idx_reviews_status ON public.reviews(status);
+
+-- keep updated_at fresh
+CREATE OR REPLACE FUNCTION update_updated_at_column() RETURNS trigger AS $$
+BEGIN NEW.updated_at = now(); RETURN NEW; END;
+$$ LANGUAGE plpgsql;
+CREATE TRIGGER trg_reviews_updated BEFORE UPDATE ON public.reviews
+  FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+
+
+-- =========================
+-- JOBS: background work (ingest/ocr/classify/extract/package)
+-- Purpose: handle big case processing asynchronously; show progress to users
+-- =========================
+CREATE TABLE IF NOT EXISTS public.jobs (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  case_id uuid REFERENCES public.cases(id) ON DELETE CASCADE,
+  type text NOT NULL CHECK (type IN ('ingest','ocr','classify','extract','package')),
+  status text NOT NULL DEFAULT 'queued' CHECK (status IN ('queued','processing','needs_attention','done','failed')),
+  progress int DEFAULT 0,          -- 0..100
+  error text,                      -- last error message if any
+  payload jsonb DEFAULT '{}'::jsonb,  -- params/context
+  created_at timestamptz DEFAULT now(),
+  started_at timestamptz,
+  finished_at timestamptz
+);
+ALTER TABLE public.jobs ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "jobs_rw_case_owner" ON public.jobs
+  USING (case_id IS NULL OR EXISTS (SELECT 1 FROM public.cases c WHERE c.id = case_id AND c.user_id = auth.uid()))
+  WITH CHECK (case_id IS NULL OR EXISTS (SELECT 1 FROM public.cases c WHERE c.id = case_id AND c.user_id = auth.uid()));
+
+CREATE INDEX IF NOT EXISTS idx_jobs_case_id ON public.jobs(case_id);
+CREATE INDEX IF NOT EXISTS idx_jobs_status ON public.jobs(status);
+
+-- Job events (logs) for transparency/debug
+CREATE TABLE IF NOT EXISTS public.job_events (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  job_id uuid NOT NULL REFERENCES public.jobs(id) ON DELETE CASCADE,
+  level text CHECK (level IN ('info','warn','error')) DEFAULT 'info',
+  message text NOT NULL,
+  at timestamptz DEFAULT now()
+);
+ALTER TABLE public.job_events ENABLE ROW LEVEL SECURITY;
+CREATE INDEX IF NOT EXISTS idx_job_events_job_id ON public.job_events(job_id);
+
+CREATE POLICY "job_events_read_case_owner" ON public.job_events
+  FOR SELECT TO authenticated
+  USING (
+    EXISTS (SELECT 1 FROM public.jobs j
+            JOIN public.cases c ON c.id = j.case_id
+           WHERE j.id = job_id AND c.user_id = auth.uid())
+  );
+
+
+-- =========================
+-- QUOTES: per-case pricing (pages, complexity, review level, state)
+-- Purpose: instant estimate for your per-case pricing model
+-- =========================
+CREATE TABLE IF NOT EXISTS public.quotes (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  case_id uuid REFERENCES public.cases(id) ON DELETE SET NULL,
+  pages int,
+  passengers int,
+  providers int,
+  review_level text CHECK (review_level IN ('ai_only','paralegal','us_attorney','state_attorney')) NOT NULL,
+  state text,
+  base_price numeric(10,2),
+  labor_price numeric(10,2),
+  jurisdiction_uplift numeric(10,2),
+  total numeric(10,2),
+  details jsonb DEFAULT '{}'::jsonb,
+  created_at timestamptz DEFAULT now()
+);
+ALTER TABLE public.quotes ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "quotes_by_owner" ON public.quotes
+  USING (case_id IS NULL OR EXISTS (SELECT 1 FROM public.cases c WHERE c.id = case_id AND c.user_id = auth.uid()))
+  WITH CHECK (case_id IS NULL OR EXISTS (SELECT 1 FROM public.cases c WHERE c.id = case_id AND c.user_id = auth.uid()));

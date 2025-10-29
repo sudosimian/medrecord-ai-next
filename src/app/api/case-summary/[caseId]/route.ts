@@ -4,7 +4,7 @@ import { generateCaseSummary, generateCaseSummaryDocument } from '@/lib/case-sum
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { caseId: string } }
+  { params }: { params: Promise<{ caseId: string }> }
 ) {
   try {
     const supabase = await createClient()
@@ -17,7 +17,7 @@ export async function GET(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    const caseId = params.caseId
+    const { caseId } = await params
 
     // Check if summary already exists
     const { data: existing } = await supabase
@@ -46,7 +46,7 @@ export async function GET(
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: { caseId: string } }
+  { params }: { params: Promise<{ caseId: string }> }
 ) {
   try {
     const supabase = await createClient()
@@ -59,7 +59,7 @@ export async function POST(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    const caseId = params.caseId
+    const { caseId } = await params
 
     // Fetch case details
     const { data: caseData, error: caseError } = await supabase

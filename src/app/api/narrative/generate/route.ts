@@ -4,7 +4,7 @@ import { generateNarrativeSummary } from '@/lib/narrative-generator'
 
 export async function POST(request: NextRequest) {
   try {
-    const supabase = createClient()
+    const supabase = await createClient()
     
     // Check auth
     const { data: { user } } = await supabase.auth.getUser()
