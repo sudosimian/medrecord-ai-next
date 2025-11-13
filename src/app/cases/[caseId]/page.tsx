@@ -27,7 +27,7 @@ import { JobProgress } from '@/components/jobs/job-progress'
 export default function CaseDetailPage() {
   const params = useParams()
   const router = useRouter()
-  const caseId = params.id as string
+  const caseId = params.caseId as string
 
   const [caseData, setCaseData] = useState<any>(null)
   const [documents, setDocuments] = useState<any[]>([])

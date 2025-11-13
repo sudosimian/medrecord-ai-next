@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase-server'
 import { generateNarrativeSummary } from '@/lib/narrative-generator'
+import { checkAIProcessingAllowed } from '@/lib/ai-privacy-guard'
 
 export async function POST(request: NextRequest) {
   try {
@@ -17,6 +18,25 @@ export async function POST(request: NextRequest) {
 
     if (!case_id) {
       return NextResponse.json({ error: 'case_id is required' }, { status: 400 })
+    }
+
+    // PRIVACY GUARD: Check if AI processing is allowed for this case
+    const privacyCheck = await checkAIProcessingAllowed(
+      {
+        caseId: case_id,
+        processingType: 'narrative',
+        aiProvider: 'openai',
+        modelUsed: 'gpt-4o',
+      },
+      user.id
+    )
+
+    if (!privacyCheck.allowed) {
+      return NextResponse.json({
+        error: 'AI processing blocked',
+        reason: privacyCheck.reason,
+        requiresHumanReview: privacyCheck.requiresHumanReview,
+      }, { status: 403 })
     }
 
     // Get case data

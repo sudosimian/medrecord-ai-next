@@ -64,9 +64,12 @@ export async function POST(request: NextRequest) {
           })
           .eq('id', documentId)
 
-        // Extract medical events
+        // Extract medical events (with privacy guard)
         const events = await extractMedicalEvents(extractedDoc.text, {
           extractCodes: options?.extractCodes,
+          caseId: caseId,
+          documentId: documentId,
+          userId: user.id,
         })
 
         // Add document reference

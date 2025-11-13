@@ -117,8 +117,9 @@ export function CreateCaseDialog({ onCaseCreated }: CreateCaseDialogProps) {
             <div>
               <Label htmlFor="case_number" className="">Case Number</Label>
               <Input className="" id="case_number"
+                type="text"
                 value={formData.case_number}
-                onChange={(e) = type="text"> setFormData({ ...formData, case_number: e.target.value })}
+                onChange={(e) => setFormData({ ...formData, case_number: e.target.value })}
                 placeholder="Auto-generated if empty"
               />
             </div>
@@ -156,26 +157,29 @@ export function CreateCaseDialog({ onCaseCreated }: CreateCaseDialogProps) {
             <div>
               <Label htmlFor="attorney_name" className="">Attorney Name</Label>
               <Input className="" id="attorney_name"
+                type="text"
                 value={formData.attorney_name}
-                onChange={(e) = type="text"> setFormData({ ...formData, attorney_name: e.target.value })}
+                onChange={(e) => setFormData({ ...formData, attorney_name: e.target.value })}
               />
             </div>
 
             <div>
               <Label htmlFor="insurance_company" className="">Insurance Company</Label>
               <Input className="" id="insurance_company"
+                type="text"
                 value={formData.insurance_company}
-                onChange={(e) = type="text"> setFormData({ ...formData, insurance_company: e.target.value })}
+                onChange={(e) => setFormData({ ...formData, insurance_company: e.target.value })}
               />
             </div>
           </div>
 
           <div>
             <Label htmlFor="claim_number" className="">Claim Number</Label>
-            <Input className="" id="claim_number"
-              value={formData.claim_number}
-              onChange={(e) = type="text"> setFormData({ ...formData, claim_number: e.target.value })}
-            />
+              <Input className="" id="claim_number"
+                type="text"
+                value={formData.claim_number}
+                onChange={(e) => setFormData({ ...formData, claim_number: e.target.value })}
+              />
           </div>
 
           <div>

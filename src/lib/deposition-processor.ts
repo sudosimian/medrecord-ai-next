@@ -6,9 +6,15 @@ import {
   DepositionContradiction,
 } from '@/types/deposition'
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-})
+// Lazy-load OpenAI client to avoid build-time errors
+function getOpenAI() {
+  if (!process.env.OPENAI_API_KEY) {
+    throw new Error('OPENAI_API_KEY environment variable is not set')
+  }
+  return new OpenAI({
+    apiKey: process.env.OPENAI_API_KEY,
+  })
+}
 
 export async function processDepositionTranscript(
   transcriptText: string,
@@ -87,7 +93,7 @@ Return JSON array:
 Significance: critical (impeachment, admission), important (case facts), routine (background)
 Tags: Relevant topics like "liability", "causation", "damages", "treatment", etc.`
 
-    const response = await openai.chat.completions.create({
+    const response = await getOpenAI().chat.completions.create({
       model: 'gpt-4o',
       messages: [
         {
@@ -154,7 +160,7 @@ Return JSON array of issues:
 
 Categories: liability, causation, damages, treatment, background`
 
-  const response = await openai.chat.completions.create({
+  const response = await getOpenAI().chat.completions.create({
     model: 'gpt-4o',
     messages: [
       {
@@ -200,7 +206,7 @@ Return JSON array:
 
 Severity: minor (clarification), moderate (inconsistency), major (direct contradiction)`
 
-  const response = await openai.chat.completions.create({
+  const response = await getOpenAI().chat.completions.create({
     model: 'gpt-4o',
     messages: [
       {
@@ -243,7 +249,7 @@ Return JSON:
 
 Include page references in parentheses.`
 
-  const response = await openai.chat.completions.create({
+  const response = await getOpenAI().chat.completions.create({
     model: 'gpt-4o',
     messages: [
       {
@@ -289,7 +295,7 @@ Include:
 
 Professional, objective tone.`
 
-  const response = await openai.chat.completions.create({
+  const response = await getOpenAI().chat.completions.create({
     model: 'gpt-4o',
     messages: [
       {
@@ -333,7 +339,7 @@ ${issue.key_quotes.join('\n')}
 
 Write concise summary of witness testimony on this issue. Include page references.`
 
-    const response = await openai.chat.completions.create({
+    const response = await getOpenAI().chat.completions.create({
       model: 'gpt-4o',
       messages: [
         {

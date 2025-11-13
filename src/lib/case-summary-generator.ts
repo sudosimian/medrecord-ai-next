@@ -1,9 +1,15 @@
 import OpenAI from 'openai'
 import { CaseSummaryData } from '@/types/case-summary'
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-})
+// Lazy-load OpenAI client to avoid build-time errors
+function getOpenAI() {
+  if (!process.env.OPENAI_API_KEY) {
+    throw new Error('OPENAI_API_KEY environment variable is not set')
+  }
+  return new OpenAI({
+    apiKey: process.env.OPENAI_API_KEY,
+  })
+}
 
 export async function generateCaseSummary(data: {
   case_id: string
@@ -81,7 +87,7 @@ Injuries: ${data.injuries?.join(', ') || 'To be determined'}
 
 Write in third person, past tense. Be concise and factual. Include key facts about liability, injuries, and damages.`
 
-  const response = await openai.chat.completions.create({
+  const response = await getOpenAI().chat.completions.create({
     model: 'gpt-4o',
     messages: [
       {
@@ -120,7 +126,7 @@ Format as JSON:
   "factors": ["Clear negligence", "Witness testimony available", "Police report favorable"]
 }`
 
-  const response = await openai.chat.completions.create({
+  const response = await getOpenAI().chat.completions.create({
     model: 'gpt-4o',
     messages: [
       {
@@ -176,7 +182,7 @@ Format as JSON:
   "permanent_impairment": false
 }`
 
-  const response = await openai.chat.completions.create({
+  const response = await getOpenAI().chat.completions.create({
     model: 'gpt-4o',
     messages: [
       {
@@ -289,7 +295,7 @@ Format as JSON:
   "weaknesses": ["Pre-existing conditions", "Treatment gap", "Limited property damage"]
 }`
 
-  const response = await openai.chat.completions.create({
+  const response = await getOpenAI().chat.completions.create({
     model: 'gpt-4o',
     messages: [
       {
@@ -331,7 +337,7 @@ List specific, actionable tasks prioritized by urgency.
 Format as JSON array:
 ["Obtain missing medical records from Dr. Smith", "File discovery requests", "Schedule plaintiff deposition"]`
 
-  const response = await openai.chat.completions.create({
+  const response = await getOpenAI().chat.completions.create({
     model: 'gpt-4o',
     messages: [
       {

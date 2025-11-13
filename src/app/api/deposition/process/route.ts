@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase-server'
 import { processDepositionTranscript } from '@/lib/deposition-processor'
 import { extractTextFromPDF } from '@/lib/pdf-processor'
+import { checkAIProcessingAllowed } from '@/lib/ai-privacy-guard'
 
 export async function POST(request: NextRequest) {
   try {
@@ -18,6 +19,26 @@ export async function POST(request: NextRequest) {
 
     if (!case_id || !document_id || !witness_name || !witness_role || !deposition_date) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
+    }
+
+    // PRIVACY GUARD: Check if AI processing is allowed for this case/document
+    const privacyCheck = await checkAIProcessingAllowed(
+      {
+        caseId: case_id,
+        documentId: document_id,
+        processingType: 'deposition_summary',
+        aiProvider: 'openai',
+        modelUsed: 'gpt-4o',
+      },
+      user.id
+    )
+
+    if (!privacyCheck.allowed) {
+      return NextResponse.json({
+        error: 'AI processing blocked',
+        reason: privacyCheck.reason,
+        requiresHumanReview: privacyCheck.requiresHumanReview,
+      }, { status: 403 })
     }
 
     // Get document from storage

@@ -1,9 +1,15 @@
 import OpenAI from 'openai'
 import { ExtractedBill } from '@/types/billing'
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-})
+// Lazy-load OpenAI client to avoid build-time errors
+function getOpenAI() {
+  if (!process.env.OPENAI_API_KEY) {
+    throw new Error('OPENAI_API_KEY environment variable is not set')
+  }
+  return new OpenAI({
+    apiKey: process.env.OPENAI_API_KEY,
+  })
+}
 
 export async function extractBillsFromText(text: string): Promise<ExtractedBill[]> {
   try {
@@ -41,7 +47,7 @@ ${text}
 
 JSON array of bills:`
 
-    const response = await openai.chat.completions.create({
+    const response = await getOpenAI().chat.completions.create({
       model: 'gpt-4o',
       messages: [
         {

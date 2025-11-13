@@ -9,9 +9,15 @@ import {
   ComparativeAnalysis 
 } from '@/types/narrative'
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-})
+// Lazy-load OpenAI client to avoid build-time errors
+function getOpenAI() {
+  if (!process.env.OPENAI_API_KEY) {
+    throw new Error('OPENAI_API_KEY environment variable is not set')
+  }
+  return new OpenAI({
+    apiKey: process.env.OPENAI_API_KEY,
+  })
+}
 
 export async function generateNarrativeSummary(
   chronologyData: any,
@@ -86,7 +92,7 @@ Provide output as JSON array with this structure:
 Categories: Musculoskeletal, Neurological, Soft Tissue, Internal, Psychological, Sensory
 Severity: minor, moderate, severe, critical`
 
-  const response = await openai.chat.completions.create({
+  const response = await getOpenAI().chat.completions.create({
     model: 'gpt-4o',
     messages: [
       {
@@ -136,7 +142,7 @@ For each injury, provide causation analysis as JSON:
 
 Score 0-100, strength: weak/moderate/strong/clear`
 
-  const response = await openai.chat.completions.create({
+  const response = await getOpenAI().chat.completions.create({
     model: 'gpt-4o',
     messages: [
       {
@@ -183,7 +189,7 @@ Return JSON array:
 
 Look for: "history of", dates before accident, pre-existing diagnoses, chronic conditions`
 
-  const response = await openai.chat.completions.create({
+  const response = await getOpenAI().chat.completions.create({
     model: 'gpt-4o',
     messages: [
       {
@@ -229,7 +235,7 @@ Return JSON array:
   }
 ]`
 
-  const response = await openai.chat.completions.create({
+  const response = await getOpenAI().chat.completions.create({
     model: 'gpt-4o',
     messages: [
       {
@@ -273,7 +279,7 @@ Return JSON array by domain:
 Domains: self_care, mobility, work, household, recreation, social
 Severity: mild, moderate, severe`
 
-  const response = await openai.chat.completions.create({
+  const response = await getOpenAI().chat.completions.create({
     model: 'gpt-4o',
     messages: [
       {
@@ -320,7 +326,7 @@ Return JSON comparing pre vs post accident:
 
 Categories: Health Status, Work Capacity, Physical Function, Quality of Life, Pain Level`
 
-  const response = await openai.chat.completions.create({
+  const response = await getOpenAI().chat.completions.create({
     model: 'gpt-4o',
     messages: [
       {
@@ -359,7 +365,7 @@ Include:
 
 Professional, factual tone.`
 
-  const response = await openai.chat.completions.create({
+  const response = await getOpenAI().chat.completions.create({
     model: 'gpt-4o',
     messages: [
       {

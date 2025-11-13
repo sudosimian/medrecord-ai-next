@@ -17,9 +17,15 @@ import { formatCaseCitation, formatStatuteCitation } from './bluebook'
 import { buildReasonablenessRows, reasonablenessFootnotes, formatReasonablenessTable } from './damages-reasonableness'
 import { findComparableVerdicts, formatVerdictForDemand, calculateAverageAmount, type VerdictItem } from './verdicts'
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-})
+// Lazy-load OpenAI client to avoid build-time errors
+function getOpenAI() {
+  if (!process.env.OPENAI_API_KEY) {
+    throw new Error('OPENAI_API_KEY environment variable is not set')
+  }
+  return new OpenAI({
+    apiKey: process.env.OPENAI_API_KEY,
+  })
+}
 
 /**
  * Generate a professional settlement demand letter
@@ -300,7 +306,7 @@ Property damage amount: ${formatCurrency(data.property_damage)}
 Describe the property damage sustained (vehicle damage, personal property, etc.). 
 Keep it to 1-2 sentences. Be factual and specific.`
 
-  const response = await openai.chat.completions.create({
+  const response = await getOpenAI().chat.completions.create({
     model: 'gpt-4o',
     messages: [
       {
@@ -341,7 +347,7 @@ Write 2-3 paragraphs that:
 
 Use strong, confident language. This should make clear liability rests with the defendant.`
 
-  const response = await openai.chat.completions.create({
+  const response = await getOpenAI().chat.completions.create({
     model: 'gpt-4o',
     messages: [
       {
@@ -426,7 +432,7 @@ Example:
 
 Extract all relevant injuries. Be specific and use proper ICD-10 coding.`
 
-  const response = await openai.chat.completions.create({
+  const response = await getOpenAI().chat.completions.create({
     model: 'gpt-4o',
     messages: [
       {
@@ -467,7 +473,7 @@ Use this format:
 
 Be detailed, factual, and use medical terminology. Write in past tense, third person.`
 
-  const response = await openai.chat.completions.create({
+  const response = await getOpenAI().chat.completions.create({
     model: 'gpt-4o',
     messages: [
       {

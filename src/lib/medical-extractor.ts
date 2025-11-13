@@ -1,19 +1,70 @@
 import OpenAI from 'openai'
 import { ExtractedEvent } from '@/types/chronology'
 import { parse, isValid, format } from 'date-fns'
+import { callAIWithPrivacyGuard, redactPHIForAI } from './ai-privacy-guard'
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-})
+// Lazy-load OpenAI client to avoid build-time errors
+function getOpenAI() {
+  if (!process.env.OPENAI_API_KEY) {
+    throw new Error('OPENAI_API_KEY environment variable is not set')
+  }
+  return new OpenAI({
+    apiKey: process.env.OPENAI_API_KEY,
+  })
+}
 
 export async function extractMedicalEvents(
   text: string,
   options?: {
     extractCodes?: boolean
+    caseId?: string
+    documentId?: string
+    userId?: string
+    skipPrivacyGuard?: boolean
   }
 ): Promise<ExtractedEvent[]> {
   try {
-    const prompt = `You are a medical records analyst. Extract all medical events from the following medical record text.
+    // Privacy guard: Check if AI processing is allowed and apply redaction if needed
+    let textToProcess = text;
+    
+    if (!options?.skipPrivacyGuard && options?.caseId && options?.userId) {
+      const guardResult = await callAIWithPrivacyGuard(
+        {
+          caseId: options.caseId,
+          documentId: options.documentId,
+          processingType: 'extraction',
+          aiProvider: 'openai',
+          modelUsed: 'gpt-4o',
+          textToProcess: text,
+          userId: options.userId,
+        },
+        async (protectedText) => {
+          return await extractMedicalEventsInternal(protectedText, options);
+        }
+      );
+
+      if (!guardResult.success) {
+        throw new Error(guardResult.error || 'AI processing blocked by privacy guard');
+      }
+
+      return guardResult.result || [];
+    } else {
+      // Legacy path: no privacy guard (for backwards compatibility during migration)
+      return await extractMedicalEventsInternal(textToProcess, options);
+    }
+  } catch (error) {
+    console.error('Medical event extraction error:', error)
+    throw new Error('Failed to extract medical events')
+  }
+}
+
+async function extractMedicalEventsInternal(
+  text: string,
+  options?: {
+    extractCodes?: boolean
+  }
+): Promise<ExtractedEvent[]> {
+  const prompt = `You are a medical records analyst. Extract all medical events from the following medical record text.
 
 For each event, identify:
 - Date (in YYYY-MM-DD format)
@@ -45,46 +96,42 @@ ${text}
 
 Return ONLY the JSON array, no additional text.`
 
-    const response = await openai.chat.completions.create({
-      model: 'gpt-4o',
-      messages: [
-        {
-          role: 'system',
-          content: 'You are a medical records analyst that extracts structured medical events from clinical text. Always return valid JSON.',
-        },
-        {
-          role: 'user',
-          content: prompt,
-        },
-      ],
-      temperature: 0.1, // Low temperature for more consistent extraction
-      max_tokens: 4000,
-    })
+  const response = await getOpenAI().chat.completions.create({
+    model: 'gpt-4o',
+    messages: [
+      {
+        role: 'system',
+        content: 'You are a medical records analyst that extracts structured medical events from clinical text. Always return valid JSON.',
+      },
+      {
+        role: 'user',
+        content: prompt,
+      },
+    ],
+    temperature: 0.1, // Low temperature for more consistent extraction
+    max_tokens: 4000,
+  })
 
-    const content = response.choices[0]?.message?.content
-    if (!content) {
-      throw new Error('No response from OpenAI')
-    }
-
-    // Parse JSON response
-    const jsonMatch = content.match(/\[[\s\S]*\]/)
-    if (!jsonMatch) {
-      console.error('No JSON array found in response:', content)
-      return []
-    }
-
-    const events: ExtractedEvent[] = JSON.parse(jsonMatch[0])
-
-    // Normalize dates
-    return events.map(event => ({
-      ...event,
-      date: normalizeDateString(event.date),
-      confidence: 0.85, // Default confidence for GPT-4 extraction
-    }))
-  } catch (error) {
-    console.error('Medical event extraction error:', error)
-    throw new Error('Failed to extract medical events')
+  const content = response.choices[0]?.message?.content
+  if (!content) {
+    throw new Error('No response from OpenAI')
   }
+
+  // Parse JSON response
+  const jsonMatch = content.match(/\[[\s\S]*\]/)
+  if (!jsonMatch) {
+    console.error('No JSON array found in response:', content)
+    return []
+  }
+
+  const events: ExtractedEvent[] = JSON.parse(jsonMatch[0])
+
+  // Normalize dates
+  return events.map(event => ({
+    ...event,
+    date: normalizeDateString(event.date),
+    confidence: 0.85, // Default confidence for GPT-4 extraction
+  }))
 }
 
 function normalizeDateString(dateStr: string): string {

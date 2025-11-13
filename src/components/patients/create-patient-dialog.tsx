@@ -83,8 +83,9 @@ export function CreatePatientDialog({ onPatientCreated }: CreatePatientDialogPro
             <div>
               <Label htmlFor="first_name" className="">First Name *</Label>
               <Input className="" id="first_name"
+                type="text"
                 value={formData.first_name}
-                onChange={(e) = type="text"> setFormData({ ...formData, first_name: e.target.value })}
+                onChange={(e) => setFormData({ ...formData, first_name: e.target.value })}
                 required
               />
             </div>
@@ -92,8 +93,9 @@ export function CreatePatientDialog({ onPatientCreated }: CreatePatientDialogPro
             <div>
               <Label htmlFor="last_name" className="">Last Name *</Label>
               <Input className="" id="last_name"
+                type="text"
                 value={formData.last_name}
-                onChange={(e) = type="text"> setFormData({ ...formData, last_name: e.target.value })}
+                onChange={(e) => setFormData({ ...formData, last_name: e.target.value })}
                 required
               />
             </div>
@@ -130,26 +132,29 @@ export function CreatePatientDialog({ onPatientCreated }: CreatePatientDialogPro
 
           <div>
             <Label htmlFor="address" className="">Address</Label>
-            <Input className="" id="address"
-              value={formData.address}
-              onChange={(e) = type="text"> setFormData({ ...formData, address: e.target.value })}
-            />
+              <Input className="" id="address"
+                type="text"
+                value={formData.address}
+                onChange={(e) => setFormData({ ...formData, address: e.target.value })}
+              />
           </div>
 
           <div className="grid grid-cols-3 gap-4">
             <div>
               <Label htmlFor="city" className="">City</Label>
               <Input className="" id="city"
+                type="text"
                 value={formData.city}
-                onChange={(e) = type="text"> setFormData({ ...formData, city: e.target.value })}
+                onChange={(e) => setFormData({ ...formData, city: e.target.value })}
               />
             </div>
 
             <div>
               <Label htmlFor="state" className="">State</Label>
               <Input className="" id="state"
+                type="text"
                 value={formData.state}
-                onChange={(e) = type="text"> setFormData({ ...formData, state: e.target.value })}
+                onChange={(e) => setFormData({ ...formData, state: e.target.value })}
                 maxLength={2}
               />
             </div>
@@ -157,8 +162,9 @@ export function CreatePatientDialog({ onPatientCreated }: CreatePatientDialogPro
             <div>
               <Label htmlFor="zip" className="">ZIP</Label>
               <Input className="" id="zip"
+                type="text"
                 value={formData.zip}
-                onChange={(e) = type="text"> setFormData({ ...formData, zip: e.target.value })}
+                onChange={(e) => setFormData({ ...formData, zip: e.target.value })}
               />
             </div>
           </div>

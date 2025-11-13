@@ -2,6 +2,7 @@ import { createClient } from '@/lib/supabase-server'
 import { NextRequest, NextResponse } from 'next/server'
 import { generateDemandLetter } from '@/lib/demand-letter-generator'
 import { DemandLetterData, calculateDamages } from '@/types/demand-letter'
+import { checkAIProcessingAllowed } from '@/lib/ai-privacy-guard'
 
 export async function POST(request: NextRequest) {
   try {
@@ -17,6 +18,31 @@ export async function POST(request: NextRequest) {
 
     if (!caseId) {
       return NextResponse.json({ error: 'Case ID required' }, { status: 400 })
+    }
+
+    // PRIVACY GUARD: Check if AI processing is allowed for this case
+    const privacyCheck = await checkAIProcessingAllowed(
+      {
+        caseId: caseId,
+        processingType: 'demand_letter',
+        aiProvider: 'openai',
+        modelUsed: 'gpt-4o',
+      },
+      user.id
+    )
+
+    if (!privacyCheck.allowed) {
+      return NextResponse.json({
+        error: 'AI processing blocked',
+        reason: privacyCheck.reason,
+        requiresHumanReview: privacyCheck.requiresHumanReview,
+        requiresRedaction: privacyCheck.requiresRedaction,
+      }, { status: 403 })
+    }
+
+    // If redaction required, warn the user
+    if (privacyCheck.requiresRedaction) {
+      console.warn(`Demand letter generation for case ${caseId}: PHI redaction recommended`)
     }
 
     // Fetch case data

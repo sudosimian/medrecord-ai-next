@@ -1,9 +1,15 @@
 import { DemandLetterData, formatCurrency, formatDate, addBusinessDays } from '@/types/demand-letter'
 import OpenAI from 'openai'
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-})
+// Lazy-load OpenAI client to avoid build-time errors
+function getOpenAI() {
+  if (!process.env.OPENAI_API_KEY) {
+    throw new Error('OPENAI_API_KEY environment variable is not set')
+  }
+  return new OpenAI({
+    apiKey: process.env.OPENAI_API_KEY,
+  })
+}
 
 export function generateMedicalExpensesTable(data: DemandLetterData): string {
   let content = `The medical expenses for treatment of injuries that ${data.plaintiff_name} suffered because of the collision amounted to **${formatCurrency(data.total_medical_expenses)}**. Copies of the medical bills are attached and itemized below:\n\n`
@@ -27,7 +33,7 @@ Explain what future treatment may be needed (consultations, therapy, procedures,
 Use phrases like "may require" and "may need".
 Be specific about types of providers and treatments.`
 
-  const response = await openai.chat.completions.create({
+  const response = await getOpenAI().chat.completions.create({
     model: 'gpt-4o',
     messages: [
       {
@@ -77,7 +83,7 @@ Use phrases like:
 
 Be emotional and persuasive while remaining professional.`
 
-  const response = await openai.chat.completions.create({
+  const response = await getOpenAI().chat.completions.create({
     model: 'gpt-4o',
     messages: [
       {
